@@ -462,6 +462,11 @@ class VueGrille extends JPanel implements Observer {
 				 * coordonnées du coin en haut à gauche.
 				 */
 				paint(g, modele.getZone(i, j), joueur, (i-1)*TAILLE, (j-1)*TAILLE);
+				//g.drawRect(0,0,20,20);
+				if (joueur.getX() == i-1 && joueur.getY() == j-1) {
+					g.setColor(Color.BLACK);
+					g.fillRect(((i-1)*TAILLE)+(TAILLE / 4), ((j-1)*TAILLE)+(TAILLE / 4), TAILLE/2, TAILLE/2);
+				}
 			}
 		}
     }
@@ -480,9 +485,12 @@ class VueGrille extends JPanel implements Observer {
 			case Submergee -> g.setColor(Color.BLUE);
 		}
 
-		if (j.getX() == x && j.getY() == y){
+		/*if (j.getX() == x && j.getY() == y){
 			g.setColor(Color.magenta);
-		}
+			//g.drawOval(x,y,10,10);
+			//g.drawOval(0,0,10,10);
+			//g.drawRect(0,0,20,20);
+		}*/
 
 
 		/*if (c.estVivante()) {
@@ -530,7 +538,6 @@ class VueCommandes extends JPanel {
 	ControleurHaut ctrl2 = new ControleurHaut(joueur);
 	/** Enregistrement du contrôleur comme auditeur du bouton. */
 	boutonFinDeTour.addActionListener(ctrl);
-	//boutonHaut.setAction(joueur.deplace(Direction.Bas));
 	boutonHaut.addActionListener(ctrl2);
 	
 	/**
