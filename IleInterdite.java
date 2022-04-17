@@ -528,17 +528,38 @@ class VueCommandes extends JPanel {
 	 * texte qui doit l'étiqueter.
 	 * Puis on ajoute ce bouton au panneau [this].
 	 */
+	// Bouton de fin de tour
 	JButton boutonFinDeTour = new JButton("Fin de tour");
 	this.add(boutonFinDeTour);
 
+	//Bouton haut
 	JButton boutonHaut = new JButton("/|\\");
 	this.add(boutonHaut);
 
+	//Bouton bas
+	JButton boutonBas = new JButton("\\|/");
+	this.add(boutonBas);
+
+	//Bouton gauche
+	JButton boutonGauche = new JButton("<-");
+	this.add(boutonGauche);
+
+	//Bouton droite
+	JButton boutonDroite = new JButton("->");
+	this.add(boutonDroite);
+
 	Controleur ctrl = new Controleur(modele);
-	ControleurHaut ctrl2 = new ControleurHaut(joueur);
+	ControleurHaut ctrlHaut = new ControleurHaut(joueur);
+	ControleurBas ctrlBas = new ControleurBas(joueur);
+	ControleurGauche ctrlGauche = new ControleurGauche(joueur);
+	ControleurDroite ctrlDroite = new ControleurDroite(joueur);
+
 	/** Enregistrement du contrôleur comme auditeur du bouton. */
 	boutonFinDeTour.addActionListener(ctrl);
-	boutonHaut.addActionListener(ctrl2);
+	boutonHaut.addActionListener(ctrlHaut);
+	boutonBas.addActionListener(ctrlBas);
+	boutonGauche.addActionListener(ctrlGauche);
+	boutonDroite.addActionListener(ctrlDroite);
 	
 	/**
 	 * Variante : une lambda-expression qui évite de créer une classe
@@ -593,7 +614,51 @@ class ControleurHaut implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		joueur.deplace(Direction.Haut);
+	}
+}
+class ControleurBas implements ActionListener {
+	Joueur joueur;
+
+	public ControleurBas(Joueur joueur) {
+		this.joueur = joueur;
+	}
+
+	public void actionPerformed(ActionEvent e) {
 		joueur.deplace(Direction.Bas);
+	}
+}
+class ControleurGauche implements ActionListener {
+	Joueur joueur;
+
+	public ControleurGauche(Joueur joueur) {
+		this.joueur = joueur;
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		joueur.deplace(Direction.Gauche);
+	}
+}
+class ControleurDroite implements ActionListener {
+	Joueur joueur;
+
+	public ControleurDroite(Joueur joueur) {
+		this.joueur = joueur;
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		joueur.deplace(Direction.Droite);
+	}
+}
+class ControleurTest implements ActionListener {
+	Joueur joueur;
+
+	public ControleurTest(Joueur joueur) {
+		this.joueur = joueur;
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		//joueur.deplace(Direction.Haut);
 	}
 }
 /** Fin du contrôleur. */
