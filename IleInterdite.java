@@ -1,6 +1,8 @@
+import java.security.KeyPair;
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
 import javax.swing.*;
 
 /**
@@ -70,8 +72,9 @@ public class IleInterdite {
 	EventQueue.invokeLater(() -> {
 		/** Voici le contenu qui nous intéresse. */
                 CModele modele = new CModele();
-				Joueur joueur1 = new Joueur(1, 0,0);
-                CVue vue = new CVue(modele, joueur1);
+				//Joueur joueur1 = new Joueur(1, 0,0);
+                //CVue vue = new CVue(modele/*, joueur1*/);
+				CVue vue = new CVue(modele);
 	    });
     }
 }
@@ -91,6 +94,10 @@ class CModele extends Observable {
     public static final int HAUTEUR=20, LARGEUR=20;
     //On crée un tableau de zones
     private Zone[][] zones;
+	private Joueur[] joueurs;
+
+	int joueurActuel = 0;
+	int nbActionsRestantes = 3;
 
     /** Construction : on initialise un tableau de zones. */
     public CModele() {
@@ -105,6 +112,12 @@ class CModele extends Observable {
 				zones[i][j] = new Zone(this,i, j);
 			}
 		}
+
+		joueurs = new Joueur[4];
+		for (int i = 0; i < 4; i++){
+			joueurs[i] = new Joueur(i+1, i,0);
+		}
+
 		init();
     }
 
@@ -135,6 +148,34 @@ class CModele extends Observable {
 			}
 			z.innonde();
 		}
+	}
+
+	public Joueur[] getJoueurs(){
+		return joueurs;
+	}
+
+	/** Verifie que le joueur peut bien se deplacer **/
+	public void deplaceJoueur(Direction dir) {
+		// A voir s'il ne faut pas directement utiliser le tableau plutot que j lorsqu'on deplace
+		Joueur j = joueurs[joueurActuel];
+		int x = j.getX();
+		int y = j.getY();
+
+		switch (dir){
+			case Haut: if (y-1 > 0 && zones[x][y-1].getEtat() != EtatZone.Submergee){joueurs[joueurActuel].deplace(dir);}
+				break;
+			case Bas: if (y+1 < CModele.HAUTEUR && zones[x][y+1].getEtat() != EtatZone.Submergee){joueurs[joueurActuel].deplace(dir);}
+				break;
+			case Gauche: if (x-1 > 0 && zones[x-1][y].getEtat() != EtatZone.Submergee){joueurs[joueurActuel].deplace(dir);}
+				break;
+			case Droite: if (x+1 < CModele.LARGEUR && zones[x+1][y].getEtat() != EtatZone.Submergee){joueurs[joueurActuel].deplace(dir);}
+				break;
+			default:
+				throw new IllegalStateException("Unexpected value: " + dir);
+		}
+
+		System.out.println(zones[x][y].getEtat());
+
 	}
 
     /**
@@ -313,13 +354,13 @@ class Joueur{
 
 	public void deplace(Direction dir){
 		switch (dir){
-			case Haut: if (y-1 > 0){this.y--;}
+			case Haut: this.y--;
 				break;
-			case Bas: if (y+1 < CModele.HAUTEUR){this.y++;}
+			case Bas: this.y++;
 				break;
-			case Gauche: if (x-1 > 0){this.x--;}
+			case Gauche: this.x--;
 				break;
-			case Droite: if (x+1 < CModele.LARGEUR){this.x++;}
+			case Droite: this.x++;
 				break;
 			default:
 				throw new IllegalStateException("Unexpected value: " + dir);
@@ -353,7 +394,8 @@ class CVue {
     private VueCommandes commandes;
 
     /** Construction d'une vue attachée à un modèle. */
-    public CVue(CModele modele, Joueur joueur) {
+    //public CVue(CModele modele, Joueur joueur) {
+	public CVue(CModele modele) {
 	/** Définition de la fenêtre principale. */
 		frame = new JFrame();
 		frame.setTitle("Jeu de la vie de Conway");
@@ -375,9 +417,11 @@ class CVue {
 		frame.setLayout(new FlowLayout());
 
 	/** Définition des deux vues et ajout à la fenêtre. */
-		grille = new VueGrille(modele, joueur);
+		//grille = new VueGrille(modele, joueur);
+		grille = new VueGrille(modele);
 		frame.add(grille);
-		commandes = new VueCommandes(modele, joueur);
+		//commandes = new VueCommandes(modele, joueur);
+		commandes = new VueCommandes(modele);
 		frame.add(commandes);
 	/**
 	 * Remarque : on peut passer à la méthode [add] des paramètres
@@ -414,14 +458,15 @@ class CVue {
 class VueGrille extends JPanel implements Observer {
     /** On maintient une référence vers le modèle. */
     private CModele modele;
-	private Joueur joueur;
+	private Joueur[] joueurs;
     /** Définition d'une taille (en pixels) pour l'affichage des cellules. */
     private final static int TAILLE = 40;
 
     /** Constructeur. */
-    public VueGrille(CModele modele, Joueur joueur) {
+    //public VueGrille(CModele modele/*, Joueur joueur*/) {
+	public VueGrille(CModele modele) {
 		this.modele = modele;
-		this.joueur = joueur;
+		this.joueurs = modele.getJoueurs();
 		/** On enregistre la vue [this] en tant qu'observateur de [modele]. */
 		modele.addObserver(this);
 		/**
@@ -454,20 +499,26 @@ class VueGrille extends JPanel implements Observer {
     public void paintComponent(Graphics g) {
 		super.repaint();
 		/** Pour chaque cellule... */
-		for(int i=1; i<=CModele.LARGEUR; i++) {
-			for(int j=1; j<=CModele.HAUTEUR; j++) {
+		for(int i=0; i<=CModele.LARGEUR; i++) {
+			for(int j=0; j<=CModele.HAUTEUR; j++) {
 				/**
 				 * ... Appeler une fonction d'affichage auxiliaire.
 				 * On lui fournit les informations de dessin [g] et les
 				 * coordonnées du coin en haut à gauche.
 				 */
-				paint(g, modele.getZone(i, j), joueur, (i-1)*TAILLE, (j-1)*TAILLE);
+				//paint(g, modele.getZone(i, j), joueur, (i-1)*TAILLE, (j-1)*TAILLE);
+				paint(g, modele.getZone(i, j),  (i)*TAILLE, (j)*TAILLE);
 				//g.drawRect(0,0,20,20);
-				if (joueur.getX() == i-1 && joueur.getY() == j-1) {
+				/*if (joueur.getX() == i-1 && joueur.getY() == j-1) {
 					g.setColor(Color.BLACK);
 					g.fillRect(((i-1)*TAILLE)+(TAILLE / 4), ((j-1)*TAILLE)+(TAILLE / 4), TAILLE/2, TAILLE/2);
-				}
+				}*/
 			}
+		}
+		// ici couleur des joueurs
+		for (Joueur j : joueurs) {
+			g.setColor(Color.BLACK);
+			g.fillRect(((j.getX())*TAILLE)+(TAILLE / 4), ((j.getY())*TAILLE)+(TAILLE / 4), TAILLE/2, TAILLE/2);
 		}
     }
     /**
@@ -477,7 +528,8 @@ class VueGrille extends JPanel implements Observer {
      * [CModele.Cellule].
      * Ceci serait impossible si [Cellule] était déclarée privée dans [CModele].
      */
-    private void paint(Graphics g, Zone z, Joueur j, int x, int y) {
+    //private void paint(Graphics g, Zone z, Joueur j, int x, int y) {
+	private void paint(Graphics g, Zone z, int x, int y) {
         /** Sélection d'une couleur. */
 		switch (z.getEtat()){
 			case Normale -> g.setColor(Color.WHITE);
@@ -517,12 +569,13 @@ class VueCommandes extends JPanel {
      * référence au modèle.
      */
     private CModele modele;
-	private Joueur joueur;
+	//private Joueur joueur;
 
     /** Constructeur. */
-    public VueCommandes(CModele modele, Joueur joueur) {
+    //public VueCommandes(CModele modele, Joueur joueur) {
+	public VueCommandes(CModele modele) {
 	this.modele = modele;
-	this.joueur = joueur;
+	//this.joueur = joueur;
 	/**
 	 * On crée un nouveau bouton, de classe [JButton], en précisant le
 	 * texte qui doit l'étiqueter.
@@ -549,12 +602,16 @@ class VueCommandes extends JPanel {
 	this.add(boutonDroite);
 
 	Controleur ctrl = new Controleur(modele);
-	ControleurHaut ctrlHaut = new ControleurHaut(joueur);
+	/*ControleurHaut ctrlHaut = new ControleurHaut(joueur);
 	ControleurBas ctrlBas = new ControleurBas(joueur);
 	ControleurGauche ctrlGauche = new ControleurGauche(joueur);
-	ControleurDroite ctrlDroite = new ControleurDroite(joueur);
+	ControleurDroite ctrlDroite = new ControleurDroite(joueur);*/
+	ControleurHaut ctrlHaut = new ControleurHaut(modele);
+	ControleurBas ctrlBas = new ControleurBas(modele);
+	ControleurGauche ctrlGauche = new ControleurGauche(modele);
+	ControleurDroite ctrlDroite = new ControleurDroite(modele);
 
-	/** Enregistrement du contrôleur comme auditeur du bouton. */
+	/** Enregistrement du contrôleur comme auditeur du bouton. **/
 	boutonFinDeTour.addActionListener(ctrl);
 	boutonHaut.addActionListener(ctrlHaut);
 	boutonBas.addActionListener(ctrlBas);
@@ -607,58 +664,63 @@ class Controleur implements ActionListener {
 }
 
 class ControleurHaut implements ActionListener {
-	Joueur joueur;
+	//Joueur joueur;
+	CModele modele;
 
-	public ControleurHaut(Joueur joueur) {
+	/*public ControleurHaut(Joueur joueur) {
 		this.joueur = joueur;
+	}*/
+	public ControleurHaut(CModele modele) {
+		this.modele = modele;
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		joueur.deplace(Direction.Haut);
+		modele.deplaceJoueur(Direction.Haut);
+		//joueur.deplace(Direction.Haut);
 	}
 }
 class ControleurBas implements ActionListener {
-	Joueur joueur;
+	CModele modele;
 
-	public ControleurBas(Joueur joueur) {
-		this.joueur = joueur;
+	public ControleurBas(CModele modele) {
+		this.modele = modele;
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		joueur.deplace(Direction.Bas);
+		modele.deplaceJoueur(Direction.Bas);
 	}
 }
 class ControleurGauche implements ActionListener {
-	Joueur joueur;
+	CModele modele;
 
-	public ControleurGauche(Joueur joueur) {
-		this.joueur = joueur;
+	public ControleurGauche(CModele modele) {
+		this.modele = modele;
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		joueur.deplace(Direction.Gauche);
+		modele.deplaceJoueur(Direction.Gauche);
 	}
 }
 class ControleurDroite implements ActionListener {
-	Joueur joueur;
+	CModele modele;
 
-	public ControleurDroite(Joueur joueur) {
-		this.joueur = joueur;
+	public ControleurDroite(CModele modele) {
+		this.modele = modele;
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		joueur.deplace(Direction.Droite);
+		modele.deplaceJoueur(Direction.Droite);
 	}
 }
 class ControleurTest implements ActionListener {
-	Joueur joueur;
+	CModele modele;
 
-	public ControleurTest(Joueur joueur) {
-		this.joueur = joueur;
+	public ControleurTest(CModele modele) {
+		this.modele = modele;
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		//joueur.deplace(Direction.Haut);
+		//modele.deplaceJoueur(Direction.Haut);
 	}
 }
 /** Fin du contrôleur. */
