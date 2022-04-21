@@ -533,19 +533,19 @@ class VueCommandes extends JPanel {
 	this.add(boutonFinDeTour);
 
 	//Bouton haut
-	JButton boutonHaut = new JButton("/|\\");
+	JButton boutonHaut = new JButton("↑");
 	this.add(boutonHaut);
 
 	//Bouton bas
-	JButton boutonBas = new JButton("\\|/");
+	JButton boutonBas = new JButton("↓");
 	this.add(boutonBas);
 
 	//Bouton gauche
-	JButton boutonGauche = new JButton("<-");
+	JButton boutonGauche = new JButton("←");
 	this.add(boutonGauche);
 
 	//Bouton droite
-	JButton boutonDroite = new JButton("->");
+	JButton boutonDroite = new JButton("→");
 	this.add(boutonDroite);
 
 	Controleur ctrl = new Controleur(modele);
