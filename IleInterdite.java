@@ -121,6 +121,14 @@ class CModele extends Observable {
 		init();
     }
 
+	public int getNumJoueurActuel() {
+		return joueurActuel+1;
+	}
+
+	public int getNbActionsRestantes() {
+		return nbActionsRestantes;
+	}
+
     /**
      * Initialisation aléatoire des cellules, exceptées celle des bords qui
      * ont été ajoutés.
@@ -661,7 +669,13 @@ class VueCommandes extends JPanel {
     /** Constructeur. */
 	public VueCommandes(CModele modele) {
 	this.modele = modele;
-	
+
+	JLabel labelNumJoueur = new JLabel("Tour du joueur " + modele.getNumJoueurActuel());
+	this.add(labelNumJoueur);
+
+	JLabel labelActionsRestantes = new JLabel("Actions restantes " + modele.getNbActionsRestantes());
+	this.add(labelActionsRestantes);
+
 	/**
 	 * On crée un nouveau bouton, de classe [JButton], en précisant le
 	 * texte qui doit l'étiqueter.
@@ -776,6 +790,7 @@ class Controleur implements ActionListener {
 	 */
 	public void actionPerformed(ActionEvent e) {
 		modele.avance();
+		labelNumJoueur.setText("Tour du joueur " + modele.getNumJoueurActuel());
 	}
 }
 
