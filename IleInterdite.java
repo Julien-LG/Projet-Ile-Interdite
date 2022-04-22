@@ -96,8 +96,8 @@ class CModele extends Observable {
     private Zone[][] zones;
 	private Joueur[] joueurs;
 
-	int joueurActuel = 0;
-	int nbActionsRestantes = 3;
+	private int joueurActuel = 0;
+	private int nbActionsRestantes = 3;
 
     /** Construction : on initialise un tableau de zones. */
     public CModele() {
@@ -154,28 +154,58 @@ class CModele extends Observable {
 		return joueurs;
 	}
 
-	/** Verifie que le joueur peut bien se deplacer **/
+	/** Déplace le joueur s'il est bien dans la grille et qu'il ne va pas sur une zone submergée **/
 	public void deplaceJoueur(Direction dir) {
-		// A voir s'il ne faut pas directement utiliser le tableau plutot que j lorsqu'on deplace
-		Joueur j = joueurs[joueurActuel];
-		int x = j.getX();
-		int y = j.getY();
+		// À voir s'il ne faut pas directement utiliser le tableau plutôt que j lorsqu'on déplace
+		if (nbActionsRestantes > 0) {
+			Joueur j = joueurs[joueurActuel];
+			int x = j.getX();
+			int y = j.getY();
 
-		switch (dir){
-			case Haut: if (y-1 > 0 && zones[x][y-1].getEtat() != EtatZone.Submergee){joueurs[joueurActuel].deplace(dir);}
-				break;
-			case Bas: if (y+1 < CModele.HAUTEUR && zones[x][y+1].getEtat() != EtatZone.Submergee){joueurs[joueurActuel].deplace(dir);}
-				break;
-			case Gauche: if (x-1 > 0 && zones[x-1][y].getEtat() != EtatZone.Submergee){joueurs[joueurActuel].deplace(dir);}
-				break;
-			case Droite: if (x+1 < CModele.LARGEUR && zones[x+1][y].getEtat() != EtatZone.Submergee){joueurs[joueurActuel].deplace(dir);}
-				break;
-			default:
-				throw new IllegalStateException("Unexpected value: " + dir);
+			switch (dir) {
+				case Haut:
+					if (y - 1 > 0 && zones[x][y - 1].getEtat() != EtatZone.Submergee) {
+						joueurs[joueurActuel].deplace(dir);
+						nbActionsRestantes--;
+					}
+					break;
+				case Bas:
+					if (y + 1 < CModele.HAUTEUR && zones[x][y + 1].getEtat() != EtatZone.Submergee) {
+						joueurs[joueurActuel].deplace(dir);
+						nbActionsRestantes--;
+					}
+					break;
+				case Gauche:
+					if (x - 1 > 0 && zones[x - 1][y].getEtat() != EtatZone.Submergee) {
+						joueurs[joueurActuel].deplace(dir);
+						nbActionsRestantes--;
+					}
+					break;
+				case Droite:
+					if (x + 1 < CModele.LARGEUR && zones[x + 1][y].getEtat() != EtatZone.Submergee) {
+						joueurs[joueurActuel].deplace(dir);
+						nbActionsRestantes--;
+					}
+					break;
+				default:
+					throw new IllegalStateException("Unexpected value: " + dir);
+			}
+
+			//System.out.println(zones[x][y].getEtat());
+			System.out.println("Actions restantes :" + nbActionsRestantes);
+			//System.out.println(joueurs[joueurActuel].getX() + " " + joueurs[joueurActuel].getY());
 		}
+	}
 
-		System.out.println(zones[x][y].getEtat());
-
+	/** Met en place le prochain joueur et son nombre d'actions **/
+	public void joueurSuivant() {
+		switch (joueurActuel){
+			case 0 -> joueurActuel = 1;
+			case 1 -> joueurActuel = 2;
+			case 2 -> joueurActuel = 3;
+			case 3 -> joueurActuel = 0;
+		}
+		nbActionsRestantes = 3;
 	}
 
     /**
@@ -187,7 +217,7 @@ class CModele extends Observable {
 	 *  - D'abord, pour chaque cellule on évalue ce que sera son état à la
 	 *    prochaine génération.
 	 *  - Ensuite, on applique les évolutions qui ont été calculées.
-	 */ 
+	 **/
 		/*for(int i=1; i<LARGEUR+1; i++) {
 			for(int j=1; j<HAUTEUR+1; j++) {
 				zones[i][j].evalue();
@@ -200,6 +230,9 @@ class CModele extends Observable {
 		}*/
 
 		innondeZones();
+
+		joueurSuivant();
+
 	/**
 	 * Pour finir, le modèle ayant changé, on signale aux observateurs
 	 * qu'ils doivent se mettre à jour.
