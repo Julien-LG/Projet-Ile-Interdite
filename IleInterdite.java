@@ -427,6 +427,10 @@ class Zone {
 				'}';
 	}
 }
+/*class ZoneArtefact extends Zone{
+
+}*/
+
 /** Fin de la classe Zone */
 enum Direction {Haut, Bas, Gauche, Droite};
 
@@ -515,6 +519,7 @@ class CVue {
      * nos deux parties de l'interface graphique.
      */
     private VueGrille grille;
+	//private VueInformations informations;
     private VueCommandes commandes;
 
     /** Construction d'une vue attachée à un modèle. */
@@ -543,6 +548,9 @@ class CVue {
 	/** Définition des deux vues et ajout à la fenêtre. */
 		grille = new VueGrille(modele);
 		frame.add(grille);
+
+		/*informations = new VueInformations(modele);
+		frame.add(informations);*/
 
 		commandes = new VueCommandes(modele);
 		frame.add(commandes);
@@ -657,7 +665,41 @@ class VueGrille extends JPanel implements Observer {
 		g.fillRect(x, y, TAILLE, TAILLE);
 	}
 }
+/*
+class VueInformations extends JPanel implements Observer {
+	/** On maintient une référence vers le modèle. */
+	/*private CModele modele;
 
+	/** Constructeur. */
+	/*public VueInformations(CModele modele) {
+		this.modele = modele;
+		/** On enregistre la vue [this] en tant qu'observateur de [modele]. */
+		/*modele.addObserver(this);
+		/**
+		 * Définition et application d'une taille fixe pour cette zone de
+		 * l'interface, calculée en fonction du nombre de cellules et de la
+		 * taille d'affichage.
+		 */
+		/*Dimension dim = new Dimension(100,100);
+		this.setPreferredSize(dim);
+
+		JLabel labelNumJoueur = new JLabel("Tour du joueur " + modele.getNumJoueurActuel());
+		this.add(labelNumJoueur);
+
+		JLabel labelActionsRestantes = new JLabel("Actions restantes " + modele.getNbActionsRestantes());
+		this.add(labelActionsRestantes);
+	}
+
+	public void update() {
+		repaint();
+	}
+
+	public void paintComponent(Graphics g) {
+		super.repaint();
+		/** Pour chaque cellule... */
+		//labelNumJoueur
+	/*}
+}*/
 
 /**
  * Une classe pour représenter la zone contenant le bouton.
@@ -666,20 +708,23 @@ class VueGrille extends JPanel implements Observer {
  * En revanche, comme la zone précédente, celle-ci est un panneau [JPanel].
  */
 class VueCommandes extends JPanel {
-    /**
+	/**
      * Pour que le bouton puisse transmettre ses ordres, on garde une
      * référence au modèle.
      */
     private CModele modele;
 
+	public JLabel labelNumJoueur;
+	public JLabel labelActionsRestantes;
+
     /** Constructeur. */
 	public VueCommandes(CModele modele) {
 	this.modele = modele;
 
-	JLabel labelNumJoueur = new JLabel("Tour du joueur " + modele.getNumJoueurActuel());
+	labelNumJoueur = new JLabel("Tour du joueur " + modele.getNumJoueurActuel());
 	this.add(labelNumJoueur);
 
-	JLabel labelActionsRestantes = new JLabel("Actions restantes " + modele.getNbActionsRestantes());
+	labelActionsRestantes = new JLabel("Actions restantes " + modele.getNbActionsRestantes());
 	this.add(labelActionsRestantes);
 
 	/**
@@ -796,7 +841,7 @@ class Controleur implements ActionListener {
 	 */
 	public void actionPerformed(ActionEvent e) {
 		modele.avance();
-		//labelNumJoueur.setText("Tour du joueur " + modele.getNumJoueurActuel());
+		//VueCommandes.labelNumJoueur.setText("Tour du joueur " + modele.getNumJoueurActuel());
 	}
 }
 
