@@ -790,7 +790,7 @@ class Controleur implements ActionListener {
 	 */
 	public void actionPerformed(ActionEvent e) {
 		modele.avance();
-		labelNumJoueur.setText("Tour du joueur " + modele.getNumJoueurActuel());
+		//labelNumJoueur.setText("Tour du joueur " + modele.getNumJoueurActuel());
 	}
 }
 
