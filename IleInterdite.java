@@ -202,6 +202,7 @@ class CModele extends Observable {
 			//System.out.println(zones[x][y].getEtat());
 			System.out.println("Actions restantes :" + nbActionsRestantes);
 			//System.out.println(joueurs[joueurActuel].getX() + " " + joueurs[joueurActuel].getY());
+			VueCommandes.labelActionsRestantes.setText("Actions restantes " + nbActionsRestantes);
 		}
 	}
 
@@ -215,7 +216,7 @@ class CModele extends Observable {
 				zones[x][y].assecheZone();
 				nbActionsRestantes--;
 			}
-
+			VueCommandes.labelActionsRestantes.setText("Actions restantes " + nbActionsRestantes);
 		}
 	}
 
@@ -253,6 +254,7 @@ class CModele extends Observable {
 				default:
 					throw new IllegalStateException("Unexpected value: " + dir);
 			}
+			VueCommandes.labelActionsRestantes.setText("Actions restantes " + nbActionsRestantes);
 		}
 	}
 
@@ -714,8 +716,8 @@ class VueCommandes extends JPanel {
      */
     private CModele modele;
 
-	public JLabel labelNumJoueur;
-	public JLabel labelActionsRestantes;
+	public static JLabel labelNumJoueur;
+	public static JLabel labelActionsRestantes;
 
     /** Constructeur. */
 	public VueCommandes(CModele modele) {
@@ -841,7 +843,8 @@ class Controleur implements ActionListener {
 	 */
 	public void actionPerformed(ActionEvent e) {
 		modele.avance();
-		//VueCommandes.labelNumJoueur.setText("Tour du joueur " + modele.getNumJoueurActuel());
+		VueCommandes.labelNumJoueur.setText("Tour du joueur " + modele.getNumJoueurActuel());
+		VueCommandes.labelActionsRestantes.setText("Actions restantes " + modele.getNbActionsRestantes());
 	}
 }
 
