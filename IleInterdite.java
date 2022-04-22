@@ -430,14 +430,25 @@ class Zone {
 /** Fin de la classe Zone */
 enum Direction {Haut, Bas, Gauche, Droite};
 
+enum TypeArtefact{FEU, EAU, TERRE, AIR};
+
 class Joueur{
 	private int numero;
 	private int x, y;
+
+	private int artefactID;
+	private TypeArtefact typeArtefact;
+	static int compteID =1;
+	static HashMap<TypeArtefact, TypeArtefact> artefactListe = new HashMap<TypeArtefact, TypeArtefact>();
+	private TypeArtefact typeCle;
 
 	public Joueur(int numero, int x, int y){
 		this.numero = numero;
 		this.x = x;
 		this.y = y;
+
+		this.typeArtefact=typeArtefact;
+		this.typeCle = typeCle;
 	}
 
 	public int getX() {
@@ -461,6 +472,23 @@ class Joueur{
 			default:
 				throw new IllegalStateException("Unexpected value: " + dir);
 		}
+	}
+
+	/** Partie sur les Artéfacts  dans la classe Joueur*/
+	public static TypeArtefact getTypeArtefact(TypeArtefact typeArtefact) {
+		TypeArtefact artefact = artefactListe.get(typeArtefact);
+		if(artefact ==  null){
+			artefactListe.put(typeArtefact, artefact);
+		}return artefact;
+	}
+
+	public TypeArtefact getType(){
+		return typeArtefact;
+	}
+
+	/** Partie sur les Clés  dans la classe Joueur*/
+	public TypeArtefact getTypeCle() {
+		return typeCle;
 	}
 }
 
@@ -494,7 +522,7 @@ class CVue {
 	public CVue(CModele modele) {
 	/** Définition de la fenêtre principale. */
 		frame = new JFrame();
-		frame.setTitle("Jeu de la vie de Conway");
+		frame.setTitle("L'Ile Interdite !");
 	/**
 	 * On précise un mode pour disposer les différents éléments à
 	 * l'intérieur de la fenêtre. Quelques possibilités sont :
@@ -513,10 +541,9 @@ class CVue {
 		frame.setLayout(new FlowLayout());
 
 	/** Définition des deux vues et ajout à la fenêtre. */
-		//grille = new VueGrille(modele, joueur);
 		grille = new VueGrille(modele);
 		frame.add(grille);
-		//commandes = new VueCommandes(modele, joueur);
+
 		commandes = new VueCommandes(modele);
 		frame.add(commandes);
 	/**
@@ -559,7 +586,6 @@ class VueGrille extends JPanel implements Observer {
     private final static int TAILLE = 40;
 
     /** Constructeur. */
-    //public VueGrille(CModele modele/*, Joueur joueur*/) {
 	public VueGrille(CModele modele) {
 		this.modele = modele;
 		this.joueurs = modele.getJoueurs();
@@ -602,13 +628,7 @@ class VueGrille extends JPanel implements Observer {
 				 * On lui fournit les informations de dessin [g] et les
 				 * coordonnées du coin en haut à gauche.
 				 */
-				//paint(g, modele.getZone(i, j), joueur, (i-1)*TAILLE, (j-1)*TAILLE);
 				paint(g, modele.getZone(i, j),  (i)*TAILLE, (j)*TAILLE);
-				//g.drawRect(0,0,20,20);
-				/*if (joueur.getX() == i-1 && joueur.getY() == j-1) {
-					g.setColor(Color.BLACK);
-					g.fillRect(((i-1)*TAILLE)+(TAILLE / 4), ((j-1)*TAILLE)+(TAILLE / 4), TAILLE/2, TAILLE/2);
-				}*/
 			}
 		}
 		// ici couleur des joueurs
@@ -633,20 +653,6 @@ class VueGrille extends JPanel implements Observer {
 			case Submergee -> g.setColor(Color.BLUE);
 		}
 
-		/*if (j.getX() == x && j.getY() == y){
-			g.setColor(Color.magenta);
-			//g.drawOval(x,y,10,10);
-			//g.drawOval(0,0,10,10);
-			//g.drawRect(0,0,20,20);
-		}*/
-
-
-		/*if (c.estVivante()) {
-			g.setColor(Color.BLACK);
-		}
-		else {
-			g.setColor(Color.WHITE);
-		}
 		/** Coloration d'un rectangle. */
 		g.fillRect(x, y, TAILLE, TAILLE);
 	}
