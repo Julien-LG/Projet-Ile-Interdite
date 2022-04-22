@@ -197,6 +197,57 @@ class CModele extends Observable {
 		}
 	}
 
+	public void assecheJoueur() {
+		if (nbActionsRestantes > 0) {
+			Joueur j = joueurs[joueurActuel];
+			int x = j.getX();
+			int y = j.getY();
+
+			if (zones[x][y].getEtat() == EtatZone.Innondee) {
+				zones[x][y].assecheZone();
+				nbActionsRestantes--;
+			}
+
+		}
+	}
+
+	public void assecheJoueurDirection(Direction dir) {
+		if (nbActionsRestantes > 0) {
+			Joueur j = joueurs[joueurActuel];
+			int x = j.getX();
+			int y = j.getY();
+
+			switch (dir) {
+				case Haut:
+					if (y - 1 > 0 && zones[x][y - 1].getEtat() == EtatZone.Innondee) {
+						zones[x][y-1].assecheZone();
+						nbActionsRestantes--;
+					}
+					break;
+				case Bas:
+					if (y + 1 < CModele.HAUTEUR && zones[x][y + 1].getEtat() == EtatZone.Innondee) {
+						zones[x][y+1].assecheZone();
+						nbActionsRestantes--;
+					}
+					break;
+				case Gauche:
+					if (x - 1 > 0 && zones[x - 1][y].getEtat() == EtatZone.Innondee) {
+						zones[x-1][y].assecheZone();
+						nbActionsRestantes--;
+					}
+					break;
+				case Droite:
+					if (x + 1 < CModele.LARGEUR && zones[x + 1][y].getEtat() == EtatZone.Innondee) {
+						zones[x+1][y].assecheZone();
+						nbActionsRestantes--;
+					}
+					break;
+				default:
+					throw new IllegalStateException("Unexpected value: " + dir);
+			}
+		}
+	}
+
 	/** Met en place le prochain joueur et son nombre d'actions **/
 	public void joueurSuivant() {
 		switch (joueurActuel){
@@ -323,6 +374,10 @@ class Zone {
 			case Normale -> this.etat = EtatZone.Innondee;
 			case Innondee, Submergee -> this.etat = EtatZone.Submergee;
 		}
+	}
+
+	protected void assecheZone() {
+		this.etat = EtatZone.Normale;
 	}
 
 	/**
@@ -602,13 +657,11 @@ class VueCommandes extends JPanel {
      * référence au modèle.
      */
     private CModele modele;
-	//private Joueur joueur;
 
     /** Constructeur. */
-    //public VueCommandes(CModele modele, Joueur joueur) {
 	public VueCommandes(CModele modele) {
 	this.modele = modele;
-	//this.joueur = joueur;
+	
 	/**
 	 * On crée un nouveau bouton, de classe [JButton], en précisant le
 	 * texte qui doit l'étiqueter.
@@ -634,22 +687,52 @@ class VueCommandes extends JPanel {
 	JButton boutonDroite = new JButton("→");
 	this.add(boutonDroite);
 
+	//Bouton d'assèchement central
+	JButton boutonAsseche = new JButton("Assèche centre");
+	this.add(boutonAsseche);
+
+	//Bouton d'assèchement haut
+	JButton boutonAssecheHaut = new JButton("Assèche Haut");
+	this.add(boutonAssecheHaut);
+
+	//Bouton d'assèchement bas
+	JButton boutonAssecheBas = new JButton("Assèche Bas");
+	this.add(boutonAssecheBas);
+
+	//Bouton d'assèchement gauche
+	JButton boutonAssecheGauche = new JButton("Assèche Gauche");
+	this.add(boutonAssecheGauche);
+
+	//Bouton d'assèchement droit
+	JButton boutonAssecheDroite = new JButton("Assèche Droite");
+	this.add(boutonAssecheDroite);
+
 	Controleur ctrl = new Controleur(modele);
-	/*ControleurHaut ctrlHaut = new ControleurHaut(joueur);
-	ControleurBas ctrlBas = new ControleurBas(joueur);
-	ControleurGauche ctrlGauche = new ControleurGauche(joueur);
-	ControleurDroite ctrlDroite = new ControleurDroite(joueur);*/
+
 	ControleurHaut ctrlHaut = new ControleurHaut(modele);
 	ControleurBas ctrlBas = new ControleurBas(modele);
 	ControleurGauche ctrlGauche = new ControleurGauche(modele);
 	ControleurDroite ctrlDroite = new ControleurDroite(modele);
 
+	ControleurAsseche ctrlAsseche = new ControleurAsseche(modele);
+	ControleurAssecheHaut ctrlAssecheHaut = new ControleurAssecheHaut(modele);
+	ControleurAssecheBas ctrlAssecheBas = new ControleurAssecheBas(modele);
+	ControleurAssecheGauche ctrlAssecheGauche = new ControleurAssecheGauche(modele);
+	ControleurAssecheDroite ctrlAssecheDroite = new ControleurAssecheDroite(modele);
+
 	/** Enregistrement du contrôleur comme auditeur du bouton. **/
 	boutonFinDeTour.addActionListener(ctrl);
+
 	boutonHaut.addActionListener(ctrlHaut);
 	boutonBas.addActionListener(ctrlBas);
 	boutonGauche.addActionListener(ctrlGauche);
 	boutonDroite.addActionListener(ctrlDroite);
+
+	boutonAsseche.addActionListener(ctrlAsseche);
+	boutonAssecheHaut.addActionListener(ctrlAssecheHaut);
+	boutonAssecheBas.addActionListener(ctrlAssecheBas);
+	boutonAssecheGauche.addActionListener(ctrlAssecheGauche);
+	boutonAssecheDroite.addActionListener(ctrlAssecheDroite);
 	
 	/**
 	 * Variante : une lambda-expression qui évite de créer une classe
@@ -697,21 +780,17 @@ class Controleur implements ActionListener {
 }
 
 class ControleurHaut implements ActionListener {
-	//Joueur joueur;
 	CModele modele;
 
-	/*public ControleurHaut(Joueur joueur) {
-		this.joueur = joueur;
-	}*/
 	public ControleurHaut(CModele modele) {
 		this.modele = modele;
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		modele.deplaceJoueur(Direction.Haut);
-		//joueur.deplace(Direction.Haut);
 	}
 }
+
 class ControleurBas implements ActionListener {
 	CModele modele;
 
@@ -723,6 +802,7 @@ class ControleurBas implements ActionListener {
 		modele.deplaceJoueur(Direction.Bas);
 	}
 }
+
 class ControleurGauche implements ActionListener {
 	CModele modele;
 
@@ -734,6 +814,7 @@ class ControleurGauche implements ActionListener {
 		modele.deplaceJoueur(Direction.Gauche);
 	}
 }
+
 class ControleurDroite implements ActionListener {
 	CModele modele;
 
@@ -745,6 +826,67 @@ class ControleurDroite implements ActionListener {
 		modele.deplaceJoueur(Direction.Droite);
 	}
 }
+
+class ControleurAsseche implements ActionListener {
+	CModele modele;
+
+	public ControleurAsseche(CModele modele) {
+		this.modele = modele;
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		modele.assecheJoueur();
+	}
+}
+
+class ControleurAssecheHaut implements ActionListener {
+	CModele modele;
+
+	public ControleurAssecheHaut(CModele modele) {
+		this.modele = modele;
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		modele.assecheJoueurDirection(Direction.Haut);
+	}
+}
+
+class ControleurAssecheBas implements ActionListener {
+	CModele modele;
+
+	public ControleurAssecheBas(CModele modele) {
+		this.modele = modele;
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		modele.assecheJoueurDirection(Direction.Bas);
+	}
+}
+
+class ControleurAssecheGauche implements ActionListener {
+	CModele modele;
+
+	public ControleurAssecheGauche(CModele modele) {
+		this.modele = modele;
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		modele.assecheJoueurDirection(Direction.Gauche);
+	}
+}
+
+class ControleurAssecheDroite implements ActionListener {
+	CModele modele;
+
+	public ControleurAssecheDroite(CModele modele) {
+		this.modele = modele;
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		modele.assecheJoueurDirection(Direction.Droite);
+	}
+}
+
 class ControleurTest implements ActionListener {
 	CModele modele;
 
