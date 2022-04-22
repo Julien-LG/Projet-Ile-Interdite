@@ -334,14 +334,30 @@ class Zone {
 /** Fin de la classe Zone */
 enum Direction {Haut, Bas, Gauche, Droite};
 
-class Joueur{
+enum TypeArtefact{FEU, EAU, TERRE, AIR};
+
+class Joueur {
 	private int numero;
 	private int x, y;
 
-	public Joueur(int numero, int x, int y){
+	private int artefactID;
+	private TypeArtefact typeArtefact;
+	static int compteID =1;
+	static HashMap<TypeArtefact, TypeArtefact> artefactListe = new HashMap<TypeArtefact, TypeArtefact>();
+	private TypeArtefact typeCle;
+
+
+
+	public Joueur(int numero, int x, int y, int artefactID, TypeArtefact typeArtefact){
 		this.numero = numero;
 		this.x = x;
 		this.y = y;
+
+		this.artefactID=compteID++;
+		this.typeArtefact=typeArtefact;
+
+		this.typeCle = typeCle;
+
 	}
 
 	public int getX() {
@@ -366,8 +382,24 @@ class Joueur{
 				throw new IllegalStateException("Unexpected value: " + dir);
 		}
 	}
-}
 
+	/** Partie sur les Artéfacts  dans la classe Joueur*/
+	public static TypeArtefact getTypeArtefact(TypeArtefact typeArtefact) {
+		TypeArtefact artefact = artefactListe.get(typeArtefact);
+		if(artefact ==  null){
+			artefactListe.put(typeArtefact, artefact);
+		}return artefact;
+	}
+
+	public TypeArtefact getType(){
+		return typeArtefact;
+	}
+
+	/** Partie sur les Clés  dans la classe Joueur*/
+	public TypeArtefact getTypeCle() {
+		return typeCle;
+	}
+}
 
 /** Fin de la classe Joueur, et du modèle en général. */
 
