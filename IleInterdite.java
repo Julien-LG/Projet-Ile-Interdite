@@ -8,7 +8,7 @@ import javax.swing.*;
 /**
  * Basé sur l'Application avec interface graphique de Mr. Thibaut Balabonski, Université Paris-Sud.
  */
-
+// Test
 /**
  * Interface des objets observateurs.
  */ 
