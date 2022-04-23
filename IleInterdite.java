@@ -8,7 +8,12 @@ import javax.swing.*;
 /**
  * Basé sur l'Application avec interface graphique de Mr. Thibaut Balabonski, Université Paris-Sud.
  */
-// Test
+
+/** Les différents types **/
+enum EtatZone {Normale, Innondee, Submergee}
+enum Direction {Haut, Bas, Gauche, Droite}
+enum TypeArtefact{FEU, EAU, TERRE, AIR}
+
 /**
  * Interface des objets observateurs.
  */ 
@@ -269,6 +274,64 @@ class CModele extends Observable {
 		nbActionsRestantes = 3;
 	}
 
+	public void cleAlea() {
+		int alea = (int)(Math.random() * 8);
+
+		switch (alea){
+			case 0 -> joueurs[joueurActuel].addCle(TypeArtefact.FEU);
+			case 1 -> joueurs[joueurActuel].addCle(TypeArtefact.AIR);
+			case 2 -> joueurs[joueurActuel].addCle(TypeArtefact.EAU);
+			case 3 -> joueurs[joueurActuel].addCle(TypeArtefact.TERRE);
+			case 4,5,6,7 -> {}
+			default -> throw new IllegalStateException("Unexpected value: " + alea);
+		}
+	}
+
+	public void joueurRecupArtefact() {
+		if (nbActionsRestantes > 0) {
+			Joueur j = joueurs[joueurActuel];
+			int x = j.getX();
+			int y = j.getY();
+
+			TypeArtefact typeZone = zones[x][y].getType();
+			int nbCles = zones[x][y].getNbCles();
+
+			if (typeZone != null) {
+				switch (typeZone){
+					case AIR -> {
+						if (j.getNbCles(TypeArtefact.AIR) >= nbCles) {
+							j.addArtefact(TypeArtefact.AIR);
+							j.removeCle(TypeArtefact.AIR, nbCles);
+							nbActionsRestantes--;
+						}
+					}
+					case EAU -> {
+						if (j.getNbCles(TypeArtefact.EAU) >= nbCles) {
+							j.addArtefact(TypeArtefact.EAU);
+							j.removeCle(TypeArtefact.EAU, nbCles);
+							nbActionsRestantes--;
+						}
+					}
+					case FEU -> {
+						if (j.getNbCles(TypeArtefact.FEU) >= nbCles) {
+							j.addArtefact(TypeArtefact.FEU);
+							j.removeCle(TypeArtefact.FEU, nbCles);
+							nbActionsRestantes--;
+						}
+					}
+					case TERRE -> {
+						if (j.getNbCles(TypeArtefact.TERRE) >= nbCles) {
+							j.addArtefact(TypeArtefact.TERRE);
+							j.removeCle(TypeArtefact.TERRE, nbCles);
+							nbActionsRestantes--;
+						}
+					}
+				}
+				VueCommandes.labelActionsRestantes.setText("Actions restantes " + nbActionsRestantes);
+			}
+		}
+	}
+
     /**
      * Calcul de la génération suivante.
      */
@@ -289,7 +352,7 @@ class CModele extends Observable {
 				zones[i][j].evolue();
 			}
 		}*/
-
+		cleAlea();
 		innondeZones();
 
 		joueurSuivant();
@@ -352,14 +415,13 @@ class CModele extends Observable {
 
 /** Fin de la classe CModele. */
 
-enum EtatZone {Normale, Innondee, Submergee};
 /**
  * Définition d'une classe pour les cellules.
  * Cette classe fait encore partie du modèle.
  */
 class Zone {
     /** On conserve un pointeur vers la classe principale du modèle. */
-    private CModele modele;
+    protected CModele modele;
 
     // L'état d'une zone est donné par le type enum EtatZone.
     protected EtatZone etat;
@@ -388,6 +450,10 @@ class Zone {
 
 	protected void assecheZone() {
 		this.etat = EtatZone.Normale;
+	}
+
+	protected TypeArtefact getType() {
+		return null;
 	}
 
 	/**
@@ -428,33 +494,80 @@ class Zone {
 				", y=" + y +
 				'}';
 	}
-}
-/*class ZoneArtefact extends Zone{
 
-}*/
+	public int getNbCles() {
+		return 0;
+	}
+}
+
+class ZoneArtefact extends Zone {
+	private TypeArtefact type;
+	private int nbCles;
+
+	ZoneArtefact(CModele modele, int x, int y, TypeArtefact type, int nbCles){
+		super(modele, x, y);
+		this.type = type;
+		this.nbCles = nbCles;
+	}
+
+	public TypeArtefact getType(){
+		return type;
+	}
+	public int getNbCles(){
+		return nbCles;
+	}
+
+}
+
+class Heliport extends Zone {
+
+	Heliport(CModele modele, int x, int y){
+		super(modele, x, y);
+	}
+
+	public boolean getHeliport(){
+		return true;
+	}
+}
+
 
 /** Fin de la classe Zone */
-enum Direction {Haut, Bas, Gauche, Droite};
-
-enum TypeArtefact{FEU, EAU, TERRE, AIR};
 
 class Joueur{
 	private int numero;
 	private int x, y;
 
-	private int artefactID;
+	/*private int artefactID;
 	private TypeArtefact typeArtefact;
 	static int compteID =1;
 	static HashMap<TypeArtefact, TypeArtefact> artefactListe = new HashMap<TypeArtefact, TypeArtefact>();
-	private TypeArtefact typeCle;
+	private TypeArtefact typeCle;*/
+
+	//Liste des artefacts du joueur
+	private HashMap<TypeArtefact, Integer> artefacts;
+	//Liste des clés du joueur
+	private HashMap<TypeArtefact, Integer> cles;
 
 	public Joueur(int numero, int x, int y){
 		this.numero = numero;
 		this.x = x;
 		this.y = y;
 
-		this.typeArtefact=typeArtefact;
-		this.typeCle = typeCle;
+		/*this.typeArtefact=typeArtefact;
+		this.typeCle = typeCle;*/
+
+		artefacts = new HashMap<>();
+		cles = new HashMap<>();
+
+		artefacts.put(TypeArtefact.FEU, 0);
+		artefacts.put(TypeArtefact.AIR, 0);
+		artefacts.put(TypeArtefact.EAU, 0);
+		artefacts.put(TypeArtefact.TERRE, 0);
+		cles.put(TypeArtefact.FEU, 0);
+		cles.put(TypeArtefact.AIR, 0);
+		cles.put(TypeArtefact.EAU, 0);
+		cles.put(TypeArtefact.TERRE, 0);
+
 	}
 
 	public int getX() {
@@ -481,7 +594,7 @@ class Joueur{
 	}
 
 	/** Partie sur les Artéfacts  dans la classe Joueur*/
-	public static TypeArtefact getTypeArtefact(TypeArtefact typeArtefact) {
+	/*public static TypeArtefact getTypeArtefact(TypeArtefact typeArtefact) {
 		TypeArtefact artefact = artefactListe.get(typeArtefact);
 		if(artefact ==  null){
 			artefactListe.put(typeArtefact, artefact);
@@ -493,8 +606,28 @@ class Joueur{
 	}
 
 	/** Partie sur les Clés  dans la classe Joueur*/
-	public TypeArtefact getTypeCle() {
+	/*public TypeArtefact getTypeCle() {
 		return typeCle;
+	}*/
+
+	public int getNbArtefacts(TypeArtefact type){
+		return artefacts.get(type);
+	}
+
+	public void addArtefact(TypeArtefact type){
+		artefacts.replace(type, artefacts.get(type) + 1);
+	}
+
+	public int getNbCles(TypeArtefact type){
+		return cles.get(type);
+	}
+
+	public void addCle(TypeArtefact type){
+		cles.replace(type, cles.get(type) + 1);
+	}
+
+	public void removeCle(TypeArtefact type, int nbCles){
+		cles.replace(type, cles.get(type) - nbCles);
 	}
 }
 
@@ -736,7 +869,10 @@ class VueCommandes extends JPanel {
 	 */
 	// Bouton de fin de tour
 	JButton boutonFinDeTour = new JButton("Fin de tour");
+	//boutonFinDeTour.setBounds(1000,1000,500,500);
+	//boutonFinDeTour.setAlignmentY(50);
 	this.add(boutonFinDeTour);
+	//this.add(boutonFinDeTour, BorderLayout.SOUTH);
 
 	//Bouton haut
 	JButton boutonHaut = new JButton("↑");
