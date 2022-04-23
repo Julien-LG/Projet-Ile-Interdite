@@ -23,7 +23,7 @@ class VueCommandes extends JPanel {
 
 	GridLayout gridPrincipal = new GridLayout(3,1);
 	GridLayout gridLabel = new GridLayout(2,1);
-	GridLayout gridButton = new GridLayout(3,3);
+	GridLayout gridButton = new GridLayout(4,3);
 
     /** Constructeur. */
 	public VueCommandes(CModele modele) {
@@ -73,6 +73,9 @@ class VueCommandes extends JPanel {
 			bouton.addActionListener(ctrl2);
 			panelBoutons2.add(bouton);
 		}
+		JButton boutonArtefact = new JButton("Récuperer artefact");
+		boutonArtefact.addActionListener(ctrl2);
+		panelBoutons2.add(boutonArtefact);
 
 		this.add(panelBoutons2);
     }

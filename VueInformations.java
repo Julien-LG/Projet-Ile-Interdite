@@ -1,42 +1,53 @@
-import java.security.KeyPair;
-import java.util.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.List;
 import javax.swing.*;
 
-/*
-class VueInformations extends JPanel implements Observer {
+
+class VueInformations extends JPanel {
 	/** On maintient une référence vers le modèle. */
-	/*private CModele modele;
+	private CModele modele;
+
+    public static JLabel labelCleJ1;
+    public static JLabel labelArtJ1;
+
+    public static JLabel labelCleJ2;
+    public static JLabel labelArtJ2;
+
+    public static JLabel labelCleJ3;
+    public static JLabel labelArtJ3;
+
+    public static JLabel labelCleJ4;
+    public static JLabel labelArtJ4;
+
+    GridLayout grid = new GridLayout(4,1);
+    GridLayout gridLabels = new GridLayout(2,1);
 
 	/** Constructeur. */
-	/*public VueInformations(CModele modele) {
-		this.modele = modele;
-		/** On enregistre la vue [this] en tant qu'observateur de [modele]. */
-		/*modele.addObserver(this);
-		/**
-		 * Définition et application d'une taille fixe pour cette zone de
-		 * l'interface, calculée en fonction du nombre de cellules et de la
-		 * taille d'affichage.
-		 */
-		/*Dimension dim = new Dimension(100,100);
-		this.setPreferredSize(dim);
+	public VueInformations(CModele modele) {
+        JLabel[] labelList = new JLabel[]{labelCleJ1,labelArtJ1,labelCleJ2,labelArtJ2,labelCleJ3,labelArtJ3,labelCleJ4,labelArtJ4};
+        Joueur[] joueurs = modele.getJoueurs();
 
-		JLabel labelNumJoueur = new JLabel("Tour du joueur " + modele.getNumJoueurActuel());
-		this.add(labelNumJoueur);
+        JPanel panel1 = new JPanel();
+        JPanel panel2 = new JPanel();
+        JPanel panel3 = new JPanel();
+        JPanel panel4 = new JPanel();
 
-		JLabel labelActionsRestantes = new JLabel("Actions restantes " + modele.getNbActionsRestantes());
-		this.add(labelActionsRestantes);
+        JPanel[] panelsList = new JPanel[]{panel1,panel2,panel3,panel4};
+
+        this.modele = modele;
+        this.setLayout(grid);
+
+
+        for (int i = 0; i < 4; i++){
+            panelsList[i].setLayout(gridLabels);
+            labelList[i] = new JLabel(joueurs[i].clesToString());
+            this.add(labelList[i]);
+
+            labelList[i+1] = new JLabel(joueurs[i].artefactsToString());
+            this.add(labelList[i+1]);
+
+            panelsList[i].add(labelList[i]);
+            panelsList[i].add(labelList[i+1]);
+            this.add(panelsList[i]);
+        }
 	}
-
-	public void update() {
-		repaint();
-	}
-
-	public void paintComponent(Graphics g) {
-		super.repaint();
-		/** Pour chaque cellule... */
-		//labelNumJoueur
-	/*}
-}*/
+}

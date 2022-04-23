@@ -69,7 +69,7 @@ class VueGrille extends JPanel implements Observer {
 		}
 		// ici couleur des joueurs
 		for (Joueur j : joueurs) {
-			g.setColor(Color.BLACK);
+			g.setColor(j.getCouleur());
 			g.fillRect(((j.getX())*TAILLE)+(TAILLE / 4), ((j.getY())*TAILLE)+(TAILLE / 4), TAILLE/2, TAILLE/2);
 		}
     }

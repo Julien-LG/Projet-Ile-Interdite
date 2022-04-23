@@ -24,11 +24,10 @@ class CVue {
      * nos deux parties de l'interface graphique.
      */
     private VueGrille grille;
-	//private VueInformations informations;
+	private VueInformations informations;
     private VueCommandes commandes;
 
     /** Construction d'une vue attachée à un modèle. */
-    //public CVue(CModele modele, Joueur joueur) {
 	public CVue(CModele modele) {
 	/** Définition de la fenêtre principale. */
 		frame = new JFrame();
@@ -54,11 +53,15 @@ class CVue {
 		grille = new VueGrille(modele);
 		frame.add(grille);
 
-		/*informations = new VueInformations(modele);
-		frame.add(informations);*/
+		GridLayout grid = new GridLayout(2,1);
+		JPanel panel = new JPanel(grid);
 
 		commandes = new VueCommandes(modele);
-		frame.add(commandes);
+		panel.add(commandes);
+
+		informations = new VueInformations(modele);
+		panel.add(informations);
+		frame.add(panel);
 	/**
 	 * Remarque : on peut passer à la méthode [add] des paramètres
 	 * supplémentaires indiquant où placer l'élément. Par exemple, si on

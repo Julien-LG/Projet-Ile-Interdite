@@ -27,8 +27,8 @@ class Zone {
 		return etat;
 	}
 
-	public boolean isInnondee() {
-		return etat.equals(EtatZone.Innondee);
+	public boolean estSubmergee() {
+		return etat.equals(EtatZone.Submergee);
 	}
 
 	protected void innonde() {
@@ -72,6 +72,14 @@ class Zone {
     /*public boolean estVivante() {
 		return etat;
     }*/
+
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
+	}
 
 
 

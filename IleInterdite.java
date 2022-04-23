@@ -77,8 +77,6 @@ public class IleInterdite {
 	EventQueue.invokeLater(() -> {
 		/** Voici le contenu qui nous intéresse. */
                 CModele modele = new CModele();
-				//Joueur joueur1 = new Joueur(1, 0,0);
-                //CVue vue = new CVue(modele/*, joueur1*/);
 				CVue vue = new CVue(modele);
 	    });
     }

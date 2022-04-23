@@ -16,12 +16,17 @@ import javax.swing.*;
 class CModele extends Observable {
     //On fixe la taille de la grille.
     public static final int HAUTEUR=20, LARGEUR=20;
+
     //On crée un tableau de zones
     private final Zone[][] zones;
 	private final Joueur[] joueurs;
 
+	private Heliport heliport;
+
 	private int joueurActuel = 0;
 	private int nbActionsRestantes = 3;
+
+	Color[] couleursJoueurs = new Color[]{Color.MAGENTA, Color.ORANGE, Color.GREEN, Color.PINK};
 
     /** Construction : on initialise un tableau de zones. */
     public CModele() {
@@ -39,7 +44,7 @@ class CModele extends Observable {
 
 		joueurs = new Joueur[4];
 		for (int i = 0; i < 4; i++){
-			joueurs[i] = new Joueur(i+1, i,0);
+			joueurs[i] = new Joueur(i+1, i,0, couleursJoueurs[i]);
 		}
 
 		init();
@@ -86,45 +91,48 @@ class CModele extends Observable {
 		return joueurs;
 	}
 
+	/** Verifie si la zone proche du joueur dans la direction donnée n'est pas submergée **/
+	public boolean checkZoneJoueur(Joueur j, Direction dir) {
+		int x = j.getX();
+		int y = j.getY();
+
+		switch (dir) {
+			case Haut:
+				if (y - 1 > 0 && zones[x][y - 1].getEtat() != EtatZone.Submergee) {
+					return true;
+				}
+				break;
+			case Bas:
+				if (y + 1 < CModele.HAUTEUR && zones[x][y + 1].getEtat() != EtatZone.Submergee) {
+					return true;
+				}
+				break;
+			case Gauche:
+				if (x - 1 > 0 && zones[x - 1][y].getEtat() != EtatZone.Submergee) {
+					return true;
+				}
+				break;
+			case Droite:
+				if (x + 1 < CModele.LARGEUR && zones[x + 1][y].getEtat() != EtatZone.Submergee) {
+					return true;
+				}
+				break;
+			default:
+				throw new IllegalStateException("Unexpected value: " + dir);
+		}
+		return false;
+	}
+
 	/** Déplace le joueur s'il est bien dans la grille et qu'il ne va pas sur une zone submergée **/
 	public void deplaceJoueur(Direction dir) {
 		// À voir s'il ne faut pas directement utiliser le tableau plutôt que j lorsqu'on déplace
 		if (nbActionsRestantes > 0) {
-			Joueur j = joueurs[joueurActuel];
-			int x = j.getX();
-			int y = j.getY();
-
-			switch (dir) {
-				case Haut:
-					if (y - 1 > 0 && zones[x][y - 1].getEtat() != EtatZone.Submergee) {
-						joueurs[joueurActuel].deplace(dir);
-						nbActionsRestantes--;
-					}
-					break;
-				case Bas:
-					if (y + 1 < CModele.HAUTEUR && zones[x][y + 1].getEtat() != EtatZone.Submergee) {
-						joueurs[joueurActuel].deplace(dir);
-						nbActionsRestantes--;
-					}
-					break;
-				case Gauche:
-					if (x - 1 > 0 && zones[x - 1][y].getEtat() != EtatZone.Submergee) {
-						joueurs[joueurActuel].deplace(dir);
-						nbActionsRestantes--;
-					}
-					break;
-				case Droite:
-					if (x + 1 < CModele.LARGEUR && zones[x + 1][y].getEtat() != EtatZone.Submergee) {
-						joueurs[joueurActuel].deplace(dir);
-						nbActionsRestantes--;
-					}
-					break;
-				default:
-					throw new IllegalStateException("Unexpected value: " + dir);
+			if (checkZoneJoueur(joueurs[joueurActuel], dir)){
+				joueurs[joueurActuel].deplace(dir);
+				nbActionsRestantes--;
+				//System.out.println("Actions restantes :" + nbActionsRestantes);
+				VueCommandes.labelActionsRestantes.setText("Actions restantes " + nbActionsRestantes);
 			}
-
-			System.out.println("Actions restantes :" + nbActionsRestantes);
-			VueCommandes.labelActionsRestantes.setText("Actions restantes " + nbActionsRestantes);
 		}
 	}
 
@@ -229,6 +237,55 @@ class CModele extends Observable {
 				VueCommandes.labelActionsRestantes.setText("Actions restantes " + nbActionsRestantes);
 			}
 		}
+	}
+	/** Indique si au moins une zone voisine est franchissable **/
+	public boolean zonesVoisinesOK(){
+		for (int i = 0; i <4; i++){
+			if (checkZoneJoueur(joueurs[joueurActuel], Direction.values()[i]))
+				return true;
+		}
+		return false;
+	}
+
+	public boolean joueurEnVie() {
+		int x = joueurs[joueurActuel].getX();
+		int y = joueurs[joueurActuel].getY();
+
+		if (zones[x][y].estSubmergee() && !zonesVoisinesOK()){
+			return false;
+		}
+		return true;
+	}
+
+	public boolean unArtefactDeChaque() {
+		Integer[] tab = new Integer[]{0,0,0,0};
+		for (Joueur j: joueurs) {
+			for (int i = 0; i < 4; i++) {
+				tab[i] += j.getNbCles(TypeArtefact.values()[i]);
+			}
+		}
+		for (Integer i: tab) {
+			if (i == 0)
+				return false;
+		}
+		return true;
+	}
+
+	public boolean partieGagnee(){
+		for (Joueur j: joueurs) {
+			if (j.getX() != heliport.getX() || j.getY() != heliport.getY()){
+				return false;
+			}
+		}
+		return unArtefactDeChaque();
+	}
+
+	public boolean partiePerdue(){
+		if (!joueurEnVie())
+			return false;
+		if (heliport.estSubmergee())
+			return false;
+		return true;
 	}
 
 	/*

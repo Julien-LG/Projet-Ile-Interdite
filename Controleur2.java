@@ -39,6 +39,8 @@ class Controleur2 implements ActionListener {
 				break;
 			case "Assèche Droite": modele.assecheJoueurDirection(Direction.Droite);
 				break;
+			case "Récuperer artefact": modele.joueurRecupArtefact();
+				break;
 		}
 
 		VueCommandes.labelNumJoueur.setText("Tour du joueur " + modele.getNumJoueurActuel());

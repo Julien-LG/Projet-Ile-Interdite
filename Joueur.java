@@ -8,16 +8,20 @@ import javax.swing.*;
 class Joueur{
 	private final int numero;
 	private int x, y;
+	private Color couleur;
+	//private boolean vivant;
 
 	//Liste des artefacts du joueur
 	private HashMap<TypeArtefact, Integer> artefacts;
 	//Liste des clés du joueur
 	private HashMap<TypeArtefact, Integer> cles;
 
-	public Joueur(int numero, int x, int y){
+	public Joueur(int numero, int x, int y, Color couleur){
 		this.numero = numero;
 		this.x = x;
 		this.y = y;
+		this.couleur = couleur;
+		//this.vivant = true;
 
 		artefacts = new HashMap<>();
 		cles = new HashMap<>();
@@ -34,6 +38,10 @@ class Joueur{
 
 	public int getY() {
 		return y;
+	}
+
+	public Color getCouleur() {
+		return couleur;
 	}
 
 	public void deplace(Direction dir){
