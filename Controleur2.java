@@ -29,7 +29,7 @@ class Controleur2 implements ActionListener {
 				break;
 			case "↓": modele.deplaceJoueur(Direction.Bas);
 				break;
-			case "Assèche Centre": modele.assecheJoueur();
+			case "Assèche Centre": modele.assecheJoueurDirection(null);
 				break;
 			case "Assèche Haut": modele.assecheJoueurDirection(Direction.Haut);
 				break;

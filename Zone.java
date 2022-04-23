@@ -27,6 +27,10 @@ class Zone {
 		return etat;
 	}
 
+	public boolean isInnondee() {
+		return etat.equals(EtatZone.Innondee);
+	}
+
 	protected void innonde() {
 		switch (etat){
 			case Normale -> this.etat = EtatZone.Innondee;

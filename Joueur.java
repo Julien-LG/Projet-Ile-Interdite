@@ -6,7 +6,7 @@ import java.util.List;
 import javax.swing.*;
 
 class Joueur{
-	private int numero;
+	private final int numero;
 	private int x, y;
 
 	//Liste des artefacts du joueur
@@ -22,15 +22,10 @@ class Joueur{
 		artefacts = new HashMap<>();
 		cles = new HashMap<>();
 
-		artefacts.put(TypeArtefact.FEU, 0);
-		artefacts.put(TypeArtefact.AIR, 0);
-		artefacts.put(TypeArtefact.EAU, 0);
-		artefacts.put(TypeArtefact.TERRE, 0);
-		cles.put(TypeArtefact.FEU, 0);
-		cles.put(TypeArtefact.AIR, 0);
-		cles.put(TypeArtefact.EAU, 0);
-		cles.put(TypeArtefact.TERRE, 0);
-
+		for (int i = 0; i <4; i++){
+			artefacts.put(TypeArtefact.values()[i], 0);
+			cles.put(TypeArtefact.values()[i], 0);
+		}
 	}
 
 	public int getX() {
@@ -56,23 +51,6 @@ class Joueur{
 		}
 	}
 
-	/** Partie sur les Artéfacts  dans la classe Joueur*/
-	/*public static TypeArtefact getTypeArtefact(TypeArtefact typeArtefact) {
-		TypeArtefact artefact = artefactListe.get(typeArtefact);
-		if(artefact ==  null){
-			artefactListe.put(typeArtefact, artefact);
-		}return artefact;
-	}
-
-	public TypeArtefact getType(){
-		return typeArtefact;
-	}
-
-	/** Partie sur les Clés  dans la classe Joueur*/
-	/*public TypeArtefact getTypeCle() {
-		return typeCle;
-	}*/
-
 	public int getNbArtefacts(TypeArtefact type){
 		return artefacts.get(type);
 	}
@@ -91,5 +69,19 @@ class Joueur{
 
 	public void removeCle(TypeArtefact type, int nbCles){
 		cles.replace(type, cles.get(type) - nbCles);
+	}
+
+
+	@Override
+	public String toString() {
+		return  "Joueur " + numero+ " {" + "x=" + x + ", y=" + y + ", " + artefacts.toString() + ", " + cles.toString() +"}";
+	}
+
+	public String artefactsToString() {
+		return "Artefacts du Joueur " + numero + " " + artefacts.toString();
+	}
+
+	public String clesToString() {
+		return "Clés du Joueur " + numero + " " + cles.toString();
 	}
 }

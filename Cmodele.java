@@ -17,8 +17,8 @@ class CModele extends Observable {
     //On fixe la taille de la grille.
     public static final int HAUTEUR=20, LARGEUR=20;
     //On crée un tableau de zones
-    private Zone[][] zones;
-	private Joueur[] joueurs;
+    private final Zone[][] zones;
+	private final Joueur[] joueurs;
 
 	private int joueurActuel = 0;
 	private int nbActionsRestantes = 3;
@@ -123,23 +123,7 @@ class CModele extends Observable {
 					throw new IllegalStateException("Unexpected value: " + dir);
 			}
 
-			//System.out.println(zones[x][y].getEtat());
 			System.out.println("Actions restantes :" + nbActionsRestantes);
-			//System.out.println(joueurs[joueurActuel].getX() + " " + joueurs[joueurActuel].getY());
-			VueCommandes.labelActionsRestantes.setText("Actions restantes " + nbActionsRestantes);
-		}
-	}
-
-	public void assecheJoueur() {
-		if (nbActionsRestantes > 0) {
-			Joueur j = joueurs[joueurActuel];
-			int x = j.getX();
-			int y = j.getY();
-
-			if (zones[x][y].getEtat() == EtatZone.Innondee) {
-				zones[x][y].assecheZone();
-				nbActionsRestantes--;
-			}
 			VueCommandes.labelActionsRestantes.setText("Actions restantes " + nbActionsRestantes);
 		}
 	}
@@ -150,33 +134,41 @@ class CModele extends Observable {
 			int x = j.getX();
 			int y = j.getY();
 
-			switch (dir) {
-				case Haut:
-					if (y - 1 > 0 && zones[x][y - 1].getEtat() == EtatZone.Innondee) {
-						zones[x][y-1].assecheZone();
-						nbActionsRestantes--;
-					}
-					break;
-				case Bas:
-					if (y + 1 < CModele.HAUTEUR && zones[x][y + 1].getEtat() == EtatZone.Innondee) {
-						zones[x][y+1].assecheZone();
-						nbActionsRestantes--;
-					}
-					break;
-				case Gauche:
-					if (x - 1 > 0 && zones[x - 1][y].getEtat() == EtatZone.Innondee) {
-						zones[x-1][y].assecheZone();
-						nbActionsRestantes--;
-					}
-					break;
-				case Droite:
-					if (x + 1 < CModele.LARGEUR && zones[x + 1][y].getEtat() == EtatZone.Innondee) {
-						zones[x+1][y].assecheZone();
-						nbActionsRestantes--;
-					}
-					break;
-				default:
-					throw new IllegalStateException("Unexpected value: " + dir);
+			if (dir == null){
+				if (zones[x][y].getEtat() == EtatZone.Innondee) {
+					zones[x][y].assecheZone();
+					nbActionsRestantes--;
+				}
+			}
+			else {
+				switch (dir) {
+					case Haut:
+						if (y - 1 > 0 && zones[x][y - 1].getEtat() == EtatZone.Innondee) {
+							zones[x][y-1].assecheZone();
+							nbActionsRestantes--;
+						}
+						break;
+					case Bas:
+						if (y + 1 < CModele.HAUTEUR && zones[x][y + 1].getEtat() == EtatZone.Innondee) {
+							zones[x][y+1].assecheZone();
+							nbActionsRestantes--;
+						}
+						break;
+					case Gauche:
+						if (x - 1 > 0 && zones[x - 1][y].getEtat() == EtatZone.Innondee) {
+							zones[x-1][y].assecheZone();
+							nbActionsRestantes--;
+						}
+						break;
+					case Droite:
+						if (x + 1 < CModele.LARGEUR && zones[x + 1][y].getEtat() == EtatZone.Innondee) {
+							zones[x+1][y].assecheZone();
+							nbActionsRestantes--;
+						}
+						break;
+					default:
+						throw new IllegalStateException("Unexpected value: " + dir);
+				}
 			}
 			VueCommandes.labelActionsRestantes.setText("Actions restantes " + nbActionsRestantes);
 		}
@@ -184,26 +176,14 @@ class CModele extends Observable {
 
 	/** Met en place le prochain joueur et son nombre d'actions **/
 	public void joueurSuivant() {
-		switch (joueurActuel){
-			case 0 -> joueurActuel = 1;
-			case 1 -> joueurActuel = 2;
-			case 2 -> joueurActuel = 3;
-			case 3 -> joueurActuel = 0;
-		}
+		joueurActuel = (joueurActuel+1) % 4;
 		nbActionsRestantes = 3;
 	}
 
 	public void cleAlea() {
-		int alea = (int)(Math.random() * 8);
-
-		switch (alea){
-			case 0 -> joueurs[joueurActuel].addCle(TypeArtefact.FEU);
-			case 1 -> joueurs[joueurActuel].addCle(TypeArtefact.AIR);
-			case 2 -> joueurs[joueurActuel].addCle(TypeArtefact.EAU);
-			case 3 -> joueurs[joueurActuel].addCle(TypeArtefact.TERRE);
-			case 4,5,6,7 -> {}
-			default -> throw new IllegalStateException("Unexpected value: " + alea);
-		}
+		if (Math.random() < 0.5)
+			joueurs[joueurActuel].addCle(TypeArtefact.values()[new Random().nextInt(TypeArtefact.values().length)]);
+		System.out.println(joueurs[joueurActuel].clesToString());
 	}
 
 	public void joueurRecupArtefact() {
@@ -250,6 +230,17 @@ class CModele extends Observable {
 			}
 		}
 	}
+
+	/*
+	public void removeJoueur(Joueur joueur){
+		int x = joueur.getX();
+		int y = joueur.getY();
+		Zone z;
+		Zone j = getZone(x,y);
+		if(j.zoneInondee()){
+			JOptionPane.showMessageDialog(null, "Je suis tombé dans l'eau c'est la faute à Rousseau....!", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+	}*/
 
     /**
      * Calcul de la génération suivante.
