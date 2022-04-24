@@ -40,6 +40,10 @@ class Joueur{
 		return y;
 	}
 
+	public int getNumero() {
+		return numero;
+	}
+
 	public Color getCouleur() {
 		return couleur;
 	}

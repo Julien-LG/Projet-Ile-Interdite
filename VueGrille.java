@@ -1,8 +1,12 @@
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.security.KeyPair;
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 /**
@@ -21,12 +25,61 @@ class VueGrille extends JPanel implements Observer {
     /** Définition d'une taille (en pixels) pour l'affichage des cellules. */
     private final static int TAILLE = 70;
 
+	/*ImageIcon  imageHelico = new ImageIcon("Textures/helico.png");
+	ImageIcon  imageHelicoInondee = new ImageIcon("Textures/helicoInondee.png");
+	//ImageIcon  imageZone = new ImageIcon("Textures/zone.png").getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+	//ImageIcon  imageZone = getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+	//BufferedImage imageZone
+	/*ImageIcon  imageZoneInondee = new ImageIcon("Textures/zoneInondee.png");
+	ImageIcon  imageSub = new ImageIcon("Textures/sub.png");
+
+	ImageIcon  imageArtAir = new ImageIcon("Textures/AIR.png");
+	ImageIcon  imageArtEau = new ImageIcon("Textures/EAU.png");
+	ImageIcon  imageArtFeu = new ImageIcon("Textures/FEU.png");
+	ImageIcon  imageArtTerre = new ImageIcon("Textures/TERRE.png");
+
+	ImageIcon  imageJ1 = new ImageIcon("Textures/j1.png");
+	ImageIcon  imageJ2 = new ImageIcon("Textures/j2.png");
+	ImageIcon  imageJ3 = new ImageIcon("Textures/j3.png");
+	ImageIcon  imageJ4 = new ImageIcon("Textures/j4.png");
+
+	ImageIcon  imageJ1s = new ImageIcon("Textures/j1s.png");
+	ImageIcon  imageJ2s = new ImageIcon("Textures/j2s.png");
+	ImageIcon  imageJ3s = new ImageIcon("Textures/j3s.png");
+	ImageIcon  imageJ4s = new ImageIcon("Textures/j4s.png");*/
+
+	BufferedImage  imageHelico;
+	BufferedImage  imageHelicoInondee;
+	BufferedImage  imageZone;
+	BufferedImage  imageZoneInondee;
+	BufferedImage  imageSub;
+
+	BufferedImage  imageArtAir;
+	BufferedImage  imageArtEau;
+	BufferedImage  imageArtFeu;
+	BufferedImage  imageArtTerre;
+
+	BufferedImage  imageJ1;
+	BufferedImage  imageJ2;
+	BufferedImage  imageJ3;
+	BufferedImage  imageJ4;
+
+	BufferedImage  imageJ1s;
+	BufferedImage  imageJ2s;
+	BufferedImage  imageJ3s;
+	BufferedImage  imageJ4s;
+
     /** Constructeur. */
 	public VueGrille(CModele modele) {
 		this.modele = modele;
 		this.joueurs = modele.getJoueurs();
 		/** On enregistre la vue [this] en tant qu'observateur de [modele]. */
 		modele.addObserver(this);
+
+		//imageZone.getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+
+		//this.add(new JLabel(image));
+
 		/**
 		 * Définition et application d'une taille fixe pour cette zone de
 		 * l'interface, calculée en fonction du nombre de cellules et de la
@@ -34,6 +87,34 @@ class VueGrille extends JPanel implements Observer {
 		 */
 		Dimension dim = new Dimension(TAILLE*CModele.LARGEUR,TAILLE*CModele.HAUTEUR);
 		this.setPreferredSize(dim);
+
+		try {
+			imageHelico = ImageIO.read(new File("Textures/helico.png"));
+			imageHelicoInondee = ImageIO.read(new File("Textures/helicoInondee.png"));
+			imageZone = ImageIO.read(new File("Textures/zone.png"));
+			imageZoneInondee = ImageIO.read(new File("Textures/zoneInondee.png"));
+			imageSub = ImageIO.read(new File("Textures/sub.png"));
+
+			imageArtAir = ImageIO.read(new File("Textures/AIR.png"));
+			imageArtEau = ImageIO.read(new File("Textures/EAU.png"));
+			imageArtFeu = ImageIO.read(new File("Textures/FEU.png"));
+			imageArtTerre = ImageIO.read(new File("Textures/TERRE.png"));
+
+			imageJ1 = ImageIO.read(new File("Textures/j1.png"));
+			imageJ2 = ImageIO.read(new File("Textures/j2.png"));
+			imageJ3 = ImageIO.read(new File("Textures/j3.png"));
+			imageJ4 = ImageIO.read(new File("Textures/j4.png"));
+
+			imageJ1s = ImageIO.read(new File("Textures/j1s.png"));
+			imageJ2s = ImageIO.read(new File("Textures/j2s.png"));
+			imageJ3s = ImageIO.read(new File("Textures/j3s.png"));
+			imageJ4s = ImageIO.read(new File("Textures/j4s.png"));
+
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		setOpaque(false);
     }
 
     /**
@@ -69,8 +150,20 @@ class VueGrille extends JPanel implements Observer {
 		}
 		// ici couleur des joueurs
 		for (Joueur j : joueurs) {
-			g.setColor(j.getCouleur());
-			g.fillRect(((j.getX())*TAILLE)+(TAILLE / 4), ((j.getY())*TAILLE)+(TAILLE / 4), TAILLE/2, TAILLE/2);
+			/*g.setColor(j.getCouleur());
+			g.fillRect(((j.getX())*TAILLE)+(TAILLE / 4), ((j.getY())*TAILLE)+(TAILLE / 4), TAILLE/2, TAILLE/2);*/
+			switch (j.getNumero()){
+				case 1: g.drawImage(imageJ1.getScaledInstance(50, 50, Image.SCALE_DEFAULT), ((j.getX())*TAILLE)+(TAILLE / 4), ((j.getY())*TAILLE)+(TAILLE / 4), null);
+					break;
+				case 2: g.drawImage(imageJ2.getScaledInstance(50, 50, Image.SCALE_DEFAULT), ((j.getX())*TAILLE)+(TAILLE / 4), ((j.getY())*TAILLE)+(TAILLE / 4), null);
+					break;
+				case 3: g.drawImage(imageJ3.getScaledInstance(50, 50, Image.SCALE_DEFAULT), ((j.getX())*TAILLE)+(TAILLE / 4), ((j.getY())*TAILLE)+(TAILLE / 4), null);
+					break;
+				case 4: g.drawImage(imageJ4.getScaledInstance(50, 50, Image.SCALE_DEFAULT), ((j.getX())*TAILLE)+(TAILLE / 4), ((j.getY())*TAILLE)+(TAILLE / 4), null);
+					break;
+
+			}
+
 		}
     }
     /**
@@ -83,24 +176,30 @@ class VueGrille extends JPanel implements Observer {
     //private void paint(Graphics g, Zone z, Joueur j, int x, int y) {
 	private void paint(Graphics g, Zone z, int x, int y) {
         /** Sélection d'une couleur. */
-		switch (z.getEtat()){
-			case Normale -> g.setColor(Color.WHITE);
-			case Innondee -> g.setColor(Color.CYAN);
-			case Submergee -> g.setColor(Color.BLUE);
+		if (z.isHeliport()) {
+			switch (z.getEtat()) {
+				case Normale -> g.drawImage(imageHelico.getScaledInstance(TAILLE, TAILLE, Image.SCALE_DEFAULT), x, y, null);
+				case Innondee -> g.drawImage(imageHelicoInondee.getScaledInstance(TAILLE, TAILLE, Image.SCALE_DEFAULT), x, y, null);
+				case Submergee -> g.drawImage(imageSub.getScaledInstance(TAILLE, TAILLE, Image.SCALE_DEFAULT), x, y, null);
+			}
 		}
-
-		if (z.isHeliport())
-			g.setColor(new Color(255,191,128));
+		else {
+			switch (z.getEtat()){
+				case Normale -> g.drawImage(imageZone.getScaledInstance(TAILLE, TAILLE, Image.SCALE_DEFAULT), x, y, null);
+				case Innondee -> g.drawImage(imageZoneInondee.getScaledInstance(TAILLE, TAILLE, Image.SCALE_DEFAULT), x, y, null);
+				case Submergee -> g.drawImage(imageSub.getScaledInstance(TAILLE, TAILLE, Image.SCALE_DEFAULT), x, y, null);
+			}
+		}
 
 		if (z.isZoneArtefact())
 			switch (z.getType()){
-				case AIR -> g.setColor(new Color(224,224,235));
-				case EAU -> g.setColor(new Color(29,53,213));
-				case FEU -> g.setColor(new Color(204,51,0));
-				case TERRE -> g.setColor(new Color(153,102,51));
+				case AIR -> g.drawImage(imageArtAir.getScaledInstance(40, 40, Image.SCALE_DEFAULT), x, y, null);
+				case EAU -> g.drawImage(imageArtEau.getScaledInstance(40, 40, Image.SCALE_DEFAULT), x, y, null);
+				case FEU -> g.drawImage(imageArtFeu.getScaledInstance(40, 40, Image.SCALE_DEFAULT), x, y, null);
+				case TERRE -> g.drawImage(imageArtTerre.getScaledInstance(40, 40, Image.SCALE_DEFAULT), x, y, null);
 			}
 
 		/** Coloration d'un rectangle. */
-		g.fillRect(x, y, TAILLE, TAILLE);
+		//g.fillRect(x, y, TAILLE, TAILLE);
 	}
 }
