@@ -189,6 +189,31 @@ class CModele extends Observable {
 		}
 	}
 
+	public void lanceSacSable(int x, int y) {
+		if (nbActionsRestantes > 0) {
+			if (zones[x][y].estSubmergee()) {
+				zones[x][y].assecheZone();
+				nbActionsRestantes--;
+			}
+		}
+	}
+
+	public void deplacementHelico(int x2, int y2) {
+		if (nbActionsRestantes > 0) {
+			if (!zones[x2][y2].estSubmergee()) {
+				int x1 = joueurs[joueurActuel].getX();
+				int y1 = joueurs[joueurActuel].getY();
+				for (Joueur j: joueurs) {
+					if (j.getX() == x1 && j.getY() == y1)
+						j.deplacementLibre(x2, y2);
+				}
+				nbActionsRestantes--;
+			}
+		}
+		//TODO
+		//VueCommandes.labelActionsRestantes.setText("Actions restantes " + nbActionsRestantes);
+	}
+
 	/** Met en place le prochain joueur et son nombre d'actions **/
 	public void joueurSuivant() {
 		joueurActuel = (joueurActuel+1) % 4;

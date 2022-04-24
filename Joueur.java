@@ -59,6 +59,11 @@ class Joueur{
 		}
 	}
 
+	public void deplacementLibre(int x, int y){
+		this.x = x;
+		this.y = y;
+	}
+
 	public int getNbArtefacts(TypeArtefact type){
 		return artefacts.get(type);
 	}

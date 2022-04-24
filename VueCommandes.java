@@ -29,6 +29,9 @@ class VueCommandes extends JPanel {
 	public static JComboBox comboBoxJoueurs;
 	public static JComboBox comboBoxTypes;
 
+	public static JComboBox comboBoxX;
+	public static JComboBox comboBoxY;
+
     /** Constructeur. */
 	public VueCommandes(CModele modele) {
 		this.modele = modele;
@@ -110,6 +113,9 @@ class VueCommandes extends JPanel {
 		JButton boutonGiveCle = new JButton("Donner Clé");
 		boutonGiveCle.addActionListener(ctrl2);
 		panelComboBox.add(boutonGiveCle);
+		//////////////////////////////////////////////////////////////////
+		
+		//comboBoxX
 
 		this.add(panelComboBox);
 	}
