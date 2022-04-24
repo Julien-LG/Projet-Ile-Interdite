@@ -9,8 +9,9 @@ Nous avons traité l'ensemble du projet (points "infini" compris) ainsi que quel
 
 ## 2] Diagramme de classe et organisation
 Pour le diagramme de classe nous l'avons modifié au fur et à mesure, la première version se trouve encore sous le nom "v1_uml.jpg" et "v1_uml-2.jpg".
+La seconde se trouve sous le nom "v2_Ile_interdite_Projet_UML.pdf".
 
-Le diagramme de classe final quant à lui se trouve ci-dessous.
+Le diagramme de classe final quant à lui se trouve ci-dessous. (visible également en ouvrant le fichier "v3_uml.pdf")
 ![img.png](Projet-Ile-Interdite2.png)
 
 Pour l'oragnisation, nous avons avancé au fur et à mesure sur le projet en même temps et séparément, si travail en même temps on se répartissait sur des parties différentes autrement on regardait quelles ont été les fonctions faites en commun et on prenaît celle qui était la plus performante (ex: la méthode estSumergee qui actuellement faisait 10 lignes fût raccourci en 1 ligne ).
