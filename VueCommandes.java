@@ -21,9 +21,13 @@ class VueCommandes extends JPanel {
 	public static JLabel labelNumJoueur;
 	public static JLabel labelActionsRestantes;
 
-	GridLayout gridPrincipal = new GridLayout(3,1);
+	GridLayout gridPrincipal = new GridLayout(4,1);
 	GridLayout gridLabel = new GridLayout(2,1);
 	GridLayout gridButton = new GridLayout(4,3);
+	GridLayout gridComboBox = new GridLayout(3,2);
+
+	public static JComboBox comboBoxJoueurs;
+	public static JComboBox comboBoxTypes;
 
     /** Constructeur. */
 	public VueCommandes(CModele modele) {
@@ -32,6 +36,7 @@ class VueCommandes extends JPanel {
 		JPanel panel = new JPanel();
 		JPanel panelBoutons = new JPanel();
 		JPanel panelBoutons2 = new JPanel();
+		JPanel panelComboBox = new JPanel();
 
 		panel.setLayout(gridLabel);
 		labelNumJoueur = new JLabel("Tour du joueur " + modele.getNumJoueurActuel());
@@ -55,9 +60,9 @@ class VueCommandes extends JPanel {
 		this.add(panel);
 
 
-		for (String s: new String[]{"↖", "↑", "↗", "←", "Fin de tour", "→", "↙", "↓", "↘"}) {
+		for (String s : new String[]{"↖", "↑", "↗", "←", "Fin de tour", "→", "↙", "↓", "↘"}) {
 			JButton bouton = new JButton(s);
-			if ("↖↗↙↘".contains(s)){
+			if ("↖↗↙↘".contains(s)) {
 				bouton.setEnabled(false);
 			}
 			bouton.addActionListener(ctrl2);
@@ -65,9 +70,9 @@ class VueCommandes extends JPanel {
 		}
 		this.add(panelBoutons);
 
-		for (String s: new String[]{" ", "Assèche Haut", " ", "Assèche Gauche", "Assèche Centre", "Assèche Droite", " ", "Assèche Bas", " "}) {
+		for (String s : new String[]{" ", "Assèche Haut", " ", "Assèche Gauche", "Assèche Centre", "Assèche Droite", " ", "Assèche Bas", " "}) {
 			JButton bouton = new JButton(s);
-			if (s.equals(" ")){
+			if (s.equals(" ")) {
 				bouton.setVisible(false);
 			}
 			bouton.addActionListener(ctrl2);
@@ -77,7 +82,36 @@ class VueCommandes extends JPanel {
 		boutonArtefact.addActionListener(ctrl2);
 		panelBoutons2.add(boutonArtefact);
 
+
+
 		this.add(panelBoutons2);
-    }
+
+		panelComboBox.setLayout(gridComboBox);
+
+		JLabel labelComboJoueurs = new JLabel("Joueur sélectionné");
+		panelComboBox.add(labelComboJoueurs);
+
+		String s1[] = {"Joueur 1", "Joueur 2", "Joueur 3", "Joueur 4"};
+		comboBoxJoueurs = new JComboBox(s1);
+		panelComboBox.add(comboBoxJoueurs);
+
+		/////////////////////////////////////////////////////////////////
+		JLabel labelComboTypes = new JLabel("Type sélectionné");
+		panelComboBox.add(labelComboTypes);
+
+		String s2[] = {"FEU", "EAU", "TERRE", "AIR"};
+		comboBoxTypes  = new JComboBox(s2);
+		panelComboBox.add(comboBoxTypes);
+
+		JButton boutonVide = new JButton("");
+		boutonVide.setEnabled(false);
+		panelComboBox.add(boutonVide);
+
+		JButton boutonGiveCle = new JButton("Donner Clé");
+		boutonGiveCle.addActionListener(ctrl2);
+		panelComboBox.add(boutonGiveCle);
+
+		this.add(panelComboBox);
+	}
 }
 /** Fin de la vue. */

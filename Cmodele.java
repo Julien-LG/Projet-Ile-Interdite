@@ -65,18 +65,17 @@ class CModele extends Observable {
      * ont été ajoutés.
      */
     public void init() {
-		heliport = new Heliport(this, (int) (Math.random() * LARGEUR), (int) (Math.random() * LARGEUR));
+		Zone z = zoneAlea();
+		heliport = new Heliport(this, z.getX(), z.getY());
 
-		zones[heliport.getY()][heliport.getY()] = heliport;
+		zones[heliport.getX()][heliport.getY()] = heliport;
 
-		Zone z;
-		for (int i = 0; i < 4; i++){
+		for (int i = 0; i < 4; i++) {
 			do {
-				z = zones[(int) (Math.random() * LARGEUR)][(int) (Math.random() * LARGEUR)];
-			}while (z.isHeliport() || z.isZoneArtefact());
-			zones[z.getY()][z.getY()] = new ZoneArtefact(this,z.getX(),z.getX(), TypeArtefact.values()[i], nbClesNecessaires);
+				z = zoneAlea();
+			} while (z.isHeliport() || z.isZoneArtefact());
+			zones[z.getX()][z.getY()] = new ZoneArtefact(this,z.getX(),z.getY(), TypeArtefact.values()[i], nbClesNecessaires);
 		}
-
     }
 	private Zone zoneAlea(){
 		return zones[((int) (Math.random() * LARGEUR))][((int) (Math.random() * LARGEUR))];
@@ -105,7 +104,7 @@ class CModele extends Observable {
 
 		switch (dir) {
 			case Haut:
-				if (y - 1 > 0 && zones[x][y - 1].getEtat() != EtatZone.Submergee) {
+				if (y - 1 >= 0 && zones[x][y - 1].getEtat() != EtatZone.Submergee) {
 					return true;
 				}
 				break;
@@ -115,7 +114,7 @@ class CModele extends Observable {
 				}
 				break;
 			case Gauche:
-				if (x - 1 > 0 && zones[x - 1][y].getEtat() != EtatZone.Submergee) {
+				if (x - 1 >= 0 && zones[x - 1][y].getEtat() != EtatZone.Submergee) {
 					return true;
 				}
 				break;
@@ -247,6 +246,30 @@ class CModele extends Observable {
 			}
 		}
 	}
+
+	public void donnerCle(int numJoueurCible, TypeArtefact typeCle) {
+		if (nbActionsRestantes > 0) {
+			Joueur j = joueurs[joueurActuel];
+			//Joueur j2 = joueurs[numJoueurCible-1];
+			Joueur j2 = joueurs[numJoueurCible];
+			int x = j.getX();
+			int y = j.getY();
+
+			TypeArtefact typeZone = zones[x][y].getType();
+			int nbCles = zones[x][y].getNbCles();
+
+			if (numJoueurCible != joueurActuel && j.getNbCles(typeCle) > 0) {
+				if (j2.getX() == j.getX() && j2.getY() == j.getY()) {
+					j.removeCle(typeCle, 1);
+					j2.addCle(typeCle);
+					nbActionsRestantes--;
+				}
+				VueCommandes.labelActionsRestantes.setText("Actions restantes " + nbActionsRestantes);
+				System.out.println(j.toString());
+				System.out.println(j2.toString());
+			}
+		}
+	}
 	/** Indique si au moins une zone voisine est franchissable **/
 	public boolean zonesVoisinesOK(){
 		for (int i = 0; i <4; i++){
@@ -291,10 +314,11 @@ class CModele extends Observable {
 
 	public boolean partiePerdue(){
 		if (!joueurEnVie())
-			return false;
+			return true;
 		if (heliport.estSubmergee())
-			return false;
-		return true;
+			return true;
+
+		return false;
 	}
 
 	/*
@@ -318,18 +342,15 @@ class CModele extends Observable {
 	 *    prochaine génération.
 	 *  - Ensuite, on applique les évolutions qui ont été calculées.
 	 **/
-		/*for(int i=1; i<LARGEUR+1; i++) {
-			for(int j=1; j<HAUTEUR+1; j++) {
-				zones[i][j].evalue();
-			}
+		if (partiePerdue()){
+			JOptionPane.showMessageDialog(null, "Vous avez perdu...", "Error", JOptionPane.ERROR_MESSAGE);
 		}
-		for(int i=1; i<LARGEUR+1; i++) {
-			for(int j=1; j<HAUTEUR+1; j++) {
-				zones[i][j].evolue();
-			}
-		}*/
+		if (partieGagnee()) {
+			JOptionPane.showMessageDialog(null, "Vous avez gagné !", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+
 		cleAlea();
-		innondeZones();
+		//innondeZones();
 
 		joueurSuivant();
 

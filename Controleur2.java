@@ -41,6 +41,8 @@ class Controleur2 implements ActionListener {
 				break;
 			case "Récuperer artefact": modele.joueurRecupArtefact();
 				break;
+			case "Donner Clé": modele.donnerCle(VueCommandes.comboBoxJoueurs.getSelectedIndex(), TypeArtefact.values()[VueCommandes.comboBoxTypes.getSelectedIndex()]);
+				break;
 		}
 
 		VueCommandes.labelNumJoueur.setText("Tour du joueur " + modele.getNumJoueurActuel());
