@@ -21,7 +21,7 @@ class VueCommandes extends JPanel {
 	public static JLabel labelNumJoueur;
 	public static JLabel labelActionsRestantes;
 
-	GridLayout gridPrincipal = new GridLayout(4,1);
+	GridLayout gridPrincipal = new GridLayout(5,1);
 	GridLayout gridLabel = new GridLayout(2,1);
 	GridLayout gridButton = new GridLayout(4,3);
 	GridLayout gridComboBox = new GridLayout(3,2);
@@ -40,6 +40,7 @@ class VueCommandes extends JPanel {
 		JPanel panelBoutons = new JPanel();
 		JPanel panelBoutons2 = new JPanel();
 		JPanel panelComboBox = new JPanel();
+		JPanel panelComboBox2 = new JPanel();
 
 		panel.setLayout(gridLabel);
 		labelNumJoueur = new JLabel("Tour du joueur " + modele.getNumJoueurActuel());
@@ -113,11 +114,45 @@ class VueCommandes extends JPanel {
 		JButton boutonGiveCle = new JButton("Donner Clé");
 		boutonGiveCle.addActionListener(ctrl2);
 		panelComboBox.add(boutonGiveCle);
-		//////////////////////////////////////////////////////////////////
-		
-		//comboBoxX
 
 		this.add(panelComboBox);
+
+		//////////////////////////////////////////////////////////////////
+		panelComboBox2.setLayout(gridComboBox);
+		JLabel labelComboX = new JLabel("x sélectionné");
+		panelComboBox2.add(labelComboX);
+
+		String s3[] = new String[modele.LARGEUR];
+
+		for (int i = 0; i< modele.LARGEUR; i++) {
+			s3[i] = "" + i;
+		}
+
+		comboBoxX = new JComboBox(s3);
+		panelComboBox2.add(comboBoxX);
+
+		JLabel labelComboY = new JLabel("y sélectionné");
+		panelComboBox2.add(labelComboY);
+
+		String s4[] = new String[modele.HAUTEUR];
+
+		for (int i = 0; i< modele.HAUTEUR; i++) {
+			s4[i] = "" + i;
+		}
+
+		comboBoxY = new JComboBox(s4);
+		panelComboBox2.add(comboBoxY);
+
+		JButton boutonSacSable = new JButton("Lancer sac de sable");
+		boutonSacSable.addActionListener(ctrl2);
+		panelComboBox2.add(boutonSacSable);
+
+		JButton boutonPrendreHelico = new JButton("Prendre Hélicoptère");
+		boutonPrendreHelico.addActionListener(ctrl2);
+		panelComboBox2.add(boutonPrendreHelico);
+
+
+		this.add(panelComboBox2);
 	}
 }
 /** Fin de la vue. */

@@ -19,7 +19,7 @@ class VueGrille extends JPanel implements Observer {
     private CModele modele;
 	private Joueur[] joueurs;
     /** Définition d'une taille (en pixels) pour l'affichage des cellules. */
-    private final static int TAILLE = 40;
+    private final static int TAILLE = 70;
 
     /** Constructeur. */
 	public VueGrille(CModele modele) {

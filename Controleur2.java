@@ -43,9 +43,9 @@ class Controleur2 implements ActionListener {
 				break;
 			case "Donner Clé": modele.donnerCle(VueCommandes.comboBoxJoueurs.getSelectedIndex(), TypeArtefact.values()[VueCommandes.comboBoxTypes.getSelectedIndex()]);
 				break;
-			case "Lancer sac de sable": ;
+			case "Lancer sac de sable": modele.lanceSacSable(VueCommandes.comboBoxX.getSelectedIndex(), VueCommandes.comboBoxY.getSelectedIndex());
 				break;
-			case "Prendre Hélicoptère": ;
+			case "Prendre Hélicoptère": modele.deplacementHelico(VueCommandes.comboBoxX.getSelectedIndex(), VueCommandes.comboBoxY.getSelectedIndex());
 				break;
 		}
 

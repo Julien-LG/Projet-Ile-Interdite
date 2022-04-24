@@ -15,7 +15,7 @@ import javax.swing.*;
  */
 class CModele extends Observable {
     //On fixe la taille de la grille.
-    public static final int HAUTEUR=10, LARGEUR=10;
+    public static final int HAUTEUR=6, LARGEUR=6;
 
     //On crée un tableau de zones
     private final Zone[][] zones;
@@ -45,8 +45,11 @@ class CModele extends Observable {
 		}
 
 		joueurs = new Joueur[4];
+		Zone z;
 		for (int i = 0; i < 4; i++){
-			joueurs[i] = new Joueur(i+1, i,0, couleursJoueurs[i]);
+			z = zoneAlea();
+			//joueurs[i] = new Joueur(i+1, i,0, couleursJoueurs[i]);
+			joueurs[i] = new Joueur(i+1, z.getX(),z.getY(), couleursJoueurs[i]);
 		}
 
 		init();
@@ -191,7 +194,7 @@ class CModele extends Observable {
 
 	public void lanceSacSable(int x, int y) {
 		if (nbActionsRestantes > 0) {
-			if (zones[x][y].estSubmergee()) {
+			if (zones[x][y].getEtat() == EtatZone.Innondee) {
 				zones[x][y].assecheZone();
 				nbActionsRestantes--;
 			}
@@ -375,7 +378,7 @@ class CModele extends Observable {
 		}
 
 		cleAlea();
-		//innondeZones();
+		innondeZones();
 
 		joueurSuivant();
 

@@ -53,7 +53,7 @@ class CVue {
 		grille = new VueGrille(modele);
 		frame.add(grille);
 
-		GridLayout grid = new GridLayout(2,1);
+		GridLayout grid = new GridLayout(1,2);
 		JPanel panel = new JPanel(grid);
 
 		commandes = new VueCommandes(modele);
