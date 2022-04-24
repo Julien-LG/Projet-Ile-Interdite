@@ -15,7 +15,7 @@ import javax.swing.*;
  */
 class CModele extends Observable {
     //On fixe la taille de la grille.
-    public static final int HAUTEUR=20, LARGEUR=20;
+    public static final int HAUTEUR=10, LARGEUR=10;
 
     //On crée un tableau de zones
     private final Zone[][] zones;
@@ -26,7 +26,9 @@ class CModele extends Observable {
 	private int joueurActuel = 0;
 	private int nbActionsRestantes = 3;
 
-	Color[] couleursJoueurs = new Color[]{Color.MAGENTA, Color.ORANGE, Color.GREEN, Color.PINK};
+	private final int nbClesNecessaires = 1;
+
+	private Color[] couleursJoueurs = new Color[]{Color.MAGENTA, Color.ORANGE, Color.GREEN, Color.PINK};
 
     /** Construction : on initialise un tableau de zones. */
     public CModele() {
@@ -63,16 +65,21 @@ class CModele extends Observable {
      * ont été ajoutés.
      */
     public void init() {
-		/*for(int i=1; i<=LARGEUR; i++) {
-			for(int j=1; j<=HAUTEUR; j++) {
-				if (Math.random() < .2) {
-					zones[i][j].etat = true;
-				}
-			}
-		}*/
+		heliport = new Heliport(this, (int) (Math.random() * LARGEUR), (int) (Math.random() * LARGEUR));
+
+		zones[heliport.getY()][heliport.getY()] = heliport;
+
+		Zone z;
+		for (int i = 0; i < 4; i++){
+			do {
+				z = zones[(int) (Math.random() * LARGEUR)][(int) (Math.random() * LARGEUR)];
+			}while (z.isHeliport() || z.isZoneArtefact());
+			zones[z.getY()][z.getY()] = new ZoneArtefact(this,z.getX(),z.getX(), TypeArtefact.values()[i], nbClesNecessaires);
+		}
+
     }
 	private Zone zoneAlea(){
-		return zones[((int) (Math.random() * LARGEUR))+1][((int) (Math.random() * LARGEUR))+1];
+		return zones[((int) (Math.random() * LARGEUR))][((int) (Math.random() * LARGEUR))];
 	}
 
 	/** Innonde 3 zones aléatoires **/
@@ -129,6 +136,7 @@ class CModele extends Observable {
 		if (nbActionsRestantes > 0) {
 			if (checkZoneJoueur(joueurs[joueurActuel], dir)){
 				joueurs[joueurActuel].deplace(dir);
+				System.out.println(joueurs[joueurActuel].toString());
 				nbActionsRestantes--;
 				//System.out.println("Actions restantes :" + nbActionsRestantes);
 				VueCommandes.labelActionsRestantes.setText("Actions restantes " + nbActionsRestantes);
@@ -191,7 +199,7 @@ class CModele extends Observable {
 	public void cleAlea() {
 		if (Math.random() < 0.5)
 			joueurs[joueurActuel].addCle(TypeArtefact.values()[new Random().nextInt(TypeArtefact.values().length)]);
-		System.out.println(joueurs[joueurActuel].clesToString());
+		//System.out.println(joueurs[joueurActuel].clesToString());
 	}
 
 	public void joueurRecupArtefact() {
@@ -235,6 +243,7 @@ class CModele extends Observable {
 					}
 				}
 				VueCommandes.labelActionsRestantes.setText("Actions restantes " + nbActionsRestantes);
+				//System.out.println(joueurs[joueurActuel].artefactsToString());
 			}
 		}
 	}

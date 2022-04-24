@@ -97,6 +97,9 @@ class Zone {
 		return 0;
 	}
 
+	public boolean isZoneArtefact(){
+		return false;
+	}
 	public boolean isHeliport(){
 		return false;
 	}
@@ -112,6 +115,7 @@ class ZoneArtefact extends Zone {
 		this.nbCles = nbCles;
 	}
 
+	public boolean isZoneArtefact(){return true;}
 	public TypeArtefact getType(){
 		return type;
 	}

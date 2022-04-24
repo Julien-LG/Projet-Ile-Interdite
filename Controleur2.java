@@ -45,6 +45,37 @@ class Controleur2 implements ActionListener {
 
 		VueCommandes.labelNumJoueur.setText("Tour du joueur " + modele.getNumJoueurActuel());
 		VueCommandes.labelActionsRestantes.setText("Actions restantes " + modele.getNbActionsRestantes());
+
+		/*Joueur[] joueurs = modele.getJoueurs();
+		for (int i = 0; i < 4; i++){
+			VueInformations.labelList[i].setText(joueurs[i].clesToString());
+			//VueInformations.labelList[i+1].setText(joueurs[i].artefactsToString());
+
+			//System.out.println(joueurs[i].artefactsToString());
+			//System.out.println(joueurs[i+1].artefactsToString());
+			/*System.out.println(i + " ");
+			System.out.println(i+1 + " ");*/
+
+			/*for (int j = 1; j < 8; j+=2){
+				VueInformations.labelList[j].setText(joueurs[i].artefactsToString());
+			}
+		}*/
+
+		VueInformations.majLabels(modele);
+
+
+		/*int j = 0;
+		for (int i = 0; i < 4; i++){
+			VueInformations.labelList[j].setText(joueurs[i].clesToString());
+			VueInformations.labelList[j+1].setText(joueurs[i].artefactsToString());
+
+			//System.out.println(joueurs[i].artefactsToString());
+			//System.out.println(joueurs[i+1].artefactsToString());
+			//System.out.println(i + " ");
+			/*System.out.println(j + " ");
+			System.out.println(j+1 + " ");*/
+			/*j+=2;
+		}*/
 	}
 }
 

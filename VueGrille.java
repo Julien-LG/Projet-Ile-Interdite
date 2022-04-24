@@ -89,6 +89,17 @@ class VueGrille extends JPanel implements Observer {
 			case Submergee -> g.setColor(Color.BLUE);
 		}
 
+		if (z.isHeliport())
+			g.setColor(new Color(255,191,128));
+
+		if (z.isZoneArtefact())
+			switch (z.getType()){
+				case AIR -> g.setColor(new Color(224,224,235));
+				case EAU -> g.setColor(new Color(29,53,213));
+				case FEU -> g.setColor(new Color(204,51,0));
+				case TERRE -> g.setColor(new Color(153,102,51));
+			}
+
 		/** Coloration d'un rectangle. */
 		g.fillRect(x, y, TAILLE, TAILLE);
 	}
