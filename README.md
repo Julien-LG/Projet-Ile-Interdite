@@ -1,7 +1,8 @@
-# Projet-Ile-Interdite
- Projet de fin de semestre du cours de POGL en L2 Informatique
+# Projet Ile Interdite
+ 
+Il s'agit de mon projet de fin de semestre pour le cours de Programmation Objet et Génie Logiciel en L2 Informatique.
 
-Il s'agit du jeu basé sur le jeu Île Interdite.
+Ce jeu est basé sur le jeu de plateau l'Île Interdite.
 `2022` - `Java`, `Swing`, `IntelliJ`, `Jeu`
 
 ## 1] Avancement dans le projet
@@ -27,6 +28,7 @@ Nous optenons également des artefacts à l'infinie (bonne ou mauvaise chose ?).
 La boucle de génération de boutons dans VueCommandes faite avec l'aide Florian Pineau : (morceau de la méthode ci-dessous).
 
 -----------------------------------------------------
+```
 for (String s : new String[]{"↖", "↑", "↗", "←", "Fin de tour", "→", "↙", "↓", "↘"}) {
     JButton bouton = new JButton(s);
     if ("↖↗↙↘".contains(s)) {
@@ -35,6 +37,7 @@ for (String s : new String[]{"↖", "↑", "↗", "←", "Fin de tour", "→", "
     bouton.addActionListener(ctrl2);
     panelBoutons.add(bouton);
 }
+```
 -----------------------------------------------------
 On a récupéré également les textures sur le projet Forbidden Island disponible sur le `github djdhm` (faites une recherche sur google pour le trouver).
 
